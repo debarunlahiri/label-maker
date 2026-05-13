@@ -1,0 +1,142 @@
+# .NET MAUI Label Maker - .gitignore
+
+## Build outputs
+bin/
+obj/
+out/
+
+## Visual Studio
+.vs/
+*.user
+*.userosscache
+*.suo
+*.cache
+*.ilk
+*.pdb
+*.idb
+*.tlog
+*.lastbuildstate
+
+## Visual Studio Code
+.vscode/
+*.code-workspace
+
+## Rider
+.idea/
+*.sln.iml
+
+## NuGet
+*.nupkg
+# NuGet Symbol Packages
+*.snupkg
+# The packages folder can be ignored because of Package Restore
+**/[Pp]ackages/*
+# except build/, which is used as an MSBuild target.
+!**/[Pp]ackages/build/
+# Uncomment if necessary however generally it will be regenerated when needed
+#!**/[Pp]ackages/repositories.config
+# NuGet v3's project.json files produces more ignorable files
+*.nuget.props
+*.nuget.targets
+
+## .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+## Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+## Android
+*.apk
+*.ap_
+*.dex
+local.properties
+
+## iOS / MacCatalyst
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+## Temporary files
+*.tmp
+*.temp
+*.log
+*.vspscc
+*.vssscc
+
+## Publish profiles
+*.pubxml
+*.publishproj
+
+## Backup files
+*~
+*.swp
+*.swo
+
+## Test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+## Click-Once directory
+publish/
+
+## Publish Web Output
+*.[Pp]ublish.xml
+*.azurePubxml
+
+## Others
+*.Cache
+ClientBin/
+[Ss]tyle[Cc]op.*
+~$*
+*~
+*.dbmdl
+*.dbproj.schemaview
+*.pfx
+*.publishsettings
+node_modules/
+
+## MAUI Specific
+# Build outputs
+**/bin/
+**/obj/
+
+# Generated files
+*.generated.cs
+
+# Temporary keychain files
+*.keychain
+
+# iOS specific
+**/*.ipa
+**/Info.plist.bak
+
+# Android specific
+**/*.apk
+**/*.aab
+**/android/bin/
+**/android/obj/
+
+# Windows specific
+**/windows/bin/
+**/windows/obj/
+**/*.pfx
+
+# MacCatalyst specific
+**/maccatalyst/bin/
+**/maccatalyst/obj/
+
+# Resources generated files
+Resources/Fonts/*.ttf.bak
+Resources/Images/*.png.bak
+Resources/AppIcon/*.svg.bak
+Resources/Splash/*.svg.bak

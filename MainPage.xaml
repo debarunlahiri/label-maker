@@ -1,0 +1,574 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:LabelMaker"
+             x:Class="LabelMaker.MainPage"
+             Title="Label Maker - Professional Label Designer"
+             BackgroundColor="#E8E8E8">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+        
+        <!-- Menu Bar -->
+        <MenuBar Grid.Row="0" BackgroundColor="#F0F0F0">
+            <MenuBarItem Text="File">
+                <MenuFlyoutItem Text="New" Clicked="OnNewLabelClicked" />
+                <MenuFlyoutItem Text="Open..." Clicked="OnLoadClicked" />
+                <MenuFlyoutItem Text="Save" Clicked="OnSaveClicked" />
+                <MenuFlyoutSeparator />
+                <MenuFlyoutItem Text="Print..." Clicked="OnPrintClicked" />
+                <MenuFlyoutSeparator />
+                <MenuFlyoutItem Text="Exit" Clicked="OnExitClicked" />
+            </MenuBarItem>
+            <MenuBarItem Text="Edit">
+                <MenuFlyoutItem Text="Delete" Clicked="OnDeleteClicked" />
+                <MenuFlyoutSeparator />
+                <MenuFlyoutItem Text="Select All" />
+            </MenuBarItem>
+            <MenuBarItem Text="Create">
+                <MenuFlyoutItem Text="Text" Clicked="OnAddTextClicked" />
+                <MenuFlyoutItem Text="Rectangle" Clicked="OnAddRectangleClicked" />
+                <MenuFlyoutItem Text="Circle" Clicked="OnAddCircleClicked" />
+                <MenuFlyoutItem Text="Line" Clicked="OnAddLineClicked" />
+                <MenuFlyoutItem Text="Image" Clicked="OnAddImageClicked" />
+                <MenuFlyoutItem Text="Barcode" Clicked="OnAddBarcodeClicked" />
+                <MenuFlyoutItem Text="QR Code" Clicked="OnAddQRCodeClicked" />
+            </MenuBarItem>
+            <MenuBarItem Text="View">
+                <MenuFlyoutItem Text="Zoom In" Clicked="OnZoomInClicked" />
+                <MenuFlyoutItem Text="Zoom Out" Clicked="OnZoomOutClicked" />
+            </MenuBarItem>
+            <MenuBarItem Text="Arrange">
+                <MenuFlyoutItem Text="Bring to Front" />
+                <MenuFlyoutItem Text="Send to Back" />
+            </MenuBarItem>
+        </MenuBar>
+
+        <!-- Icon Toolbar -->
+        <Grid Grid.Row="1" 
+              BackgroundColor="#E0E0E0" 
+              HeightRequest="50">
+            <ScrollView Orientation="Horizontal">
+                <HorizontalStackLayout Spacing="2" Padding="5" VerticalOptions="Center">
+                    
+                    <!-- File Operations -->
+                    <Button Text="New" 
+                            FontSize="12"
+                            WidthRequest="50" 
+                            HeightRequest="36"
+                            BackgroundColor="Transparent"
+                            Clicked="OnNewLabelClicked"/>
+                    <Button Text="Open" 
+                            FontSize="12"
+                            WidthRequest="50" 
+                            HeightRequest="36"
+                            BackgroundColor="Transparent"
+                            Clicked="OnLoadClicked"/>
+                    <Button Text="Save" 
+                            FontSize="12"
+                            WidthRequest="50" 
+                            HeightRequest="36"
+                            BackgroundColor="Transparent"
+                            Clicked="OnSaveClicked"/>
+                    <BoxView WidthRequest="1" 
+                             HeightRequest="30" 
+                             BackgroundColor="#CCCCCC" 
+                             VerticalOptions="Center"/>
+                    
+                    <!-- Elements -->
+                    <Button Text="Text" 
+                            FontSize="12"
+                            WidthRequest="50" 
+                            HeightRequest="36"
+                            BackgroundColor="Transparent"
+                            Clicked="OnAddTextClicked"/>
+                    <Button Text="Rect" 
+                            FontSize="12"
+                            WidthRequest="50" 
+                            HeightRequest="36"
+                            BackgroundColor="Transparent"
+                            Clicked="OnAddRectangleClicked"/>
+                    <Button Text="Circle" 
+                            FontSize="12"
+                            WidthRequest="50" 
+                            HeightRequest="36"
+                            BackgroundColor="Transparent"
+                            Clicked="OnAddCircleClicked"/>
+                    <Button Text="Line" 
+                            FontSize="12"
+                            WidthRequest="50" 
+                            HeightRequest="36"
+                            BackgroundColor="Transparent"
+                            Clicked="OnAddLineClicked"/>
+                    <Button Text="Image" 
+                            FontSize="12"
+                            WidthRequest="50" 
+                            HeightRequest="36"
+                            BackgroundColor="Transparent"
+                            Clicked="OnAddImageClicked"/>
+                    <Button Text="Bar" 
+                            FontSize="12"
+                            WidthRequest="50" 
+                            HeightRequest="36"
+                            BackgroundColor="Transparent"
+                            Clicked="OnAddBarcodeClicked"/>
+                    <Button Text="QR" 
+                            FontSize="12"
+                            WidthRequest="50" 
+                            HeightRequest="36"
+                            BackgroundColor="Transparent"
+                            Clicked="OnAddQRCodeClicked"/>
+                    <BoxView WidthRequest="1" 
+                             HeightRequest="30" 
+                             BackgroundColor="#CCCCCC" 
+                             VerticalOptions="Center"/>
+                    
+                    <!-- Actions -->
+                    <Button Text="Delete" 
+                            FontSize="12"
+                            WidthRequest="50" 
+                            HeightRequest="36"
+                            BackgroundColor="Transparent"
+                            TextColor="Red"
+                            Clicked="OnDeleteClicked"/>
+                    <Button Text="Print" 
+                            FontSize="12"
+                            WidthRequest="50" 
+                            HeightRequest="36"
+                            BackgroundColor="Transparent"
+                            Clicked="OnPrintClicked"/>
+                    <BoxView WidthRequest="1" 
+                             HeightRequest="30" 
+                             BackgroundColor="#CCCCCC" 
+                             VerticalOptions="Center"/>
+                    
+                    <!-- Zoom -->
+                    <Button Text="-" 
+                            FontSize="16"
+                            WidthRequest="30" 
+                            HeightRequest="30"
+                            BackgroundColor="Transparent"
+                            Clicked="OnZoomOutClicked"/>
+                    <Label x:Name="ZoomLabel" 
+                           Text="100%" 
+                           VerticalOptions="Center" 
+                           WidthRequest="50"
+                           HorizontalTextAlignment="Center"/>
+                    <Button Text="+" 
+                            FontSize="16"
+                            WidthRequest="30" 
+                            HeightRequest="30"
+                            BackgroundColor="Transparent"
+                            Clicked="OnZoomInClicked"/>
+                    <BoxView WidthRequest="1" 
+                             HeightRequest="30" 
+                             BackgroundColor="#CCCCCC" 
+                             VerticalOptions="Center"/>
+                    <CheckBox x:Name="GridCheckBox"
+                              IsChecked="True"
+                              CheckedChanged="OnGridToggleChanged"/>
+                    <Label Text="Grid" 
+                           VerticalOptions="Center" 
+                           Margin="-5,0,0,0"/>
+                </HorizontalStackLayout>
+            </ScrollView>
+        </Grid>
+
+        <!-- Main Workspace -->
+        <Grid Grid.Row="2" ColumnDefinitions="200,*,250">
+            
+            <!-- Left Panel - Object Tree -->
+            <Grid Grid.Column="0" BackgroundColor="#F5F5F5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                
+                <!-- Objects Header -->
+                <Grid Grid.Row="0" BackgroundColor="#E0E0E0" HeightRequest="30">
+                    <Label Text="Objects" 
+                           FontAttributes="Bold" 
+                           VerticalOptions="Center" 
+                           Padding="10,0"/>
+                </Grid>
+                
+                <!-- Object Tree -->
+                <ScrollView Grid.Row="1">
+                    <CollectionView x:Name="ObjectList"
+                                    SelectionMode="Single"
+                                    SelectionChanged="OnObjectListSelectionChanged">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="local:ObjectListItem">
+                                <Grid Padding="10,5" ColumnDefinitions="30,*">
+                                    <Label Grid.Column="0" 
+                                           Text="[]"
+                                           VerticalOptions="Center"/>
+                                    <Label Grid.Column="1" 
+                                           Text="{Binding Name}" 
+                                           VerticalOptions="Center"/>
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </ScrollView>
+                
+                <!-- Layers Header -->
+                <Grid Grid.Row="2" BackgroundColor="#E0E0E0" HeightRequest="30">
+                    <Label Text="Layers" 
+                           FontAttributes="Bold" 
+                           VerticalOptions="Center" 
+                           Padding="10,0"/>
+                </Grid>
+                
+                <!-- Layers List -->
+                <ScrollView Grid.Row="3">
+                    <VerticalStackLayout x:Name="LayersList" Padding="5">
+                        <Border BackgroundColor="#FFF9C4" 
+                                Padding="5" 
+                                Stroke="#FBC02D"
+                                StrokeThickness="1">
+                            <Label Text="Layer 1" 
+                                   FontAttributes="Bold"/>
+                        </Border>
+                    </VerticalStackLayout>
+                </ScrollView>
+            </Grid>
+
+            <!-- Center - Canvas Area -->
+            <Grid Grid.Column="1" BackgroundColor="#C0C0C0">
+                <Grid RowDefinitions="30,*,30" ColumnDefinitions="30,*,30">
+                    
+                    <!-- Top Ruler -->
+                    <Grid Grid.Row="0" 
+                          Grid.Column="1" 
+                          BackgroundColor="#F0F0F0" 
+                          HeightRequest="30">
+                        <GraphicsView x:Name="TopRuler"/>
+                    </Grid>
+                    
+                    <!-- Left Ruler -->
+                    <Grid Grid.Row="1" 
+                          Grid.Column="0" 
+                          BackgroundColor="#F0F0F0" 
+                          WidthRequest="30">
+                        <GraphicsView x:Name="LeftRuler"/>
+                    </Grid>
+                    
+                    <!-- Canvas -->
+                    <ScrollView Grid.Row="1" 
+                                Grid.Column="1"
+                                x:Name="CanvasScrollView"
+                                BackgroundColor="#909090">
+                        <AbsoluteLayout x:Name="CanvasContainer"
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Center"
+                                        Margin="20">
+                            <!-- Grid Background -->
+                            <GraphicsView x:Name="GridBackground"
+                                          AbsoluteLayout.LayoutBounds="0,0,1,1"
+                                          AbsoluteLayout.LayoutFlags="All"
+                                          IsVisible="True"/>
+                            
+                            <!-- White Canvas -->
+                            <Border x:Name="CanvasBorder"
+                                    BackgroundColor="White"
+                                    Stroke="Black"
+                                    StrokeThickness="1"
+                                    AbsoluteLayout.LayoutBounds="0,0,400,300"
+                                    AbsoluteLayout.LayoutFlags="None">
+                                <AbsoluteLayout x:Name="CanvasArea"
+                                                BackgroundColor="Transparent">
+                                    <AbsoluteLayout.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="OnCanvasTapped"/>
+                                    </AbsoluteLayout.GestureRecognizers>
+                                </AbsoluteLayout>
+                            </Border>
+                        </AbsoluteLayout>
+                    </ScrollView>
+                    
+                    <!-- Bottom Ruler corner -->
+                    <Grid Grid.Row="2" 
+                          Grid.Column="0" 
+                          BackgroundColor="#F0F0F0"/>
+                    
+                    <!-- Bottom Ruler -->
+                    <Grid Grid.Row="2" 
+                          Grid.Column="1" 
+                          BackgroundColor="#F0F0F0" 
+                          HeightRequest="30">
+                        <GraphicsView x:Name="BottomRuler"/>
+                    </Grid>
+                    
+                    <!-- Right Ruler corner -->
+                    <Grid Grid.Row="0" 
+                          Grid.Column="2" 
+                          BackgroundColor="#F0F0F0"/>
+                    
+                    <!-- Right Ruler -->
+                    <Grid Grid.Row="1" 
+                          Grid.Column="2" 
+                          BackgroundColor="#F0F0F0" 
+                          WidthRequest="30">
+                        <GraphicsView x:Name="RightRuler"/>
+                    </Grid>
+                    
+                    <!-- Bottom-Right Corner -->
+                    <Grid Grid.Row="2" 
+                          Grid.Column="2" 
+                          BackgroundColor="#F0F0F0"/>
+                </Grid>
+            </Grid>
+
+            <!-- Right Panel - Properties -->
+            <ScrollView Grid.Column="2" BackgroundColor="#F8F9FA">
+                <VerticalStackLayout x:Name="PropertiesPanel" 
+                                     Padding="10" 
+                                     Spacing="10">
+                    <Label Text="Properties" 
+                           FontSize="16" 
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"/>
+                    <BoxView HeightRequest="1" 
+                             BackgroundColor="#CCCCCC"/>
+                    
+                    <!-- No Selection Message -->
+                    <Label x:Name="NoSelectionLabel"
+                           Text="Select an object to edit properties"
+                           TextColor="Gray"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center"/>
+
+                    <!-- Common Properties -->
+                    <VerticalStackLayout x:Name="CommonProperties" 
+                                         IsVisible="False" 
+                                         Spacing="5">
+                        <Label Text="Position &amp; Size" 
+                               FontAttributes="Bold"
+                               FontSize="14"/>
+                        <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto">
+                            <Label Grid.Row="0" Grid.Column="0" Text="X:" VerticalOptions="Center" WidthRequest="50"/>
+                            <Entry Grid.Row="0" Grid.Column="1" x:Name="PosXEntry" Keyboard="Numeric" TextChanged="OnPositionChanged"/>
+                            
+                            <Label Grid.Row="1" Grid.Column="0" Text="Y:" VerticalOptions="Center" WidthRequest="50"/>
+                            <Entry Grid.Row="1" Grid.Column="1" x:Name="PosYEntry" Keyboard="Numeric" TextChanged="OnPositionChanged"/>
+                            
+                            <Label Grid.Row="2" Grid.Column="0" Text="Width:" VerticalOptions="Center" WidthRequest="50"/>
+                            <Entry Grid.Row="2" Grid.Column="1" x:Name="WidthEntry" Keyboard="Numeric" TextChanged="OnSizeChanged"/>
+                            
+                            <Label Grid.Row="3" Grid.Column="0" Text="Height:" VerticalOptions="Center" WidthRequest="50"/>
+                            <Entry Grid.Row="3" Grid.Column="1" x:Name="HeightEntry" Keyboard="Numeric" TextChanged="OnSizeChanged"/>
+                        </Grid>
+
+                        <Label Text="Rotation:" FontAttributes="Bold"/>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Slider Grid.Column="0"
+                                    x:Name="RotationSlider" 
+                                    Minimum="0" 
+                                    Maximum="360" 
+                                    ValueChanged="OnRotationChanged"/>
+                            <Label Grid.Column="1"
+                                   x:Name="RotationValue" 
+                                   Text="0°" 
+                                   WidthRequest="40"
+                                   VerticalOptions="Center"/>
+                        </Grid>
+
+                        <Label Text="Background:" FontAttributes="Bold"/>
+                        <FlexLayout Wrap="Wrap" JustifyContent="Start">
+                            <Button BackgroundColor="White" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnColorClicked"/>
+                            <Button BackgroundColor="Black" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnColorClicked"/>
+                            <Button BackgroundColor="Red" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnColorClicked"/>
+                            <Button BackgroundColor="Blue" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnColorClicked"/>
+                            <Button BackgroundColor="Green" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnColorClicked"/>
+                            <Button BackgroundColor="Yellow" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnColorClicked"/>
+                            <Button BackgroundColor="Orange" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnColorClicked"/>
+                            <Button BackgroundColor="Purple" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnColorClicked"/>
+                            <Button BackgroundColor="Gray" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnColorClicked"/>
+                        </FlexLayout>
+
+                        <Label Text="Border:" FontAttributes="Bold"/>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <FlexLayout Grid.Column="0" Wrap="Wrap" JustifyContent="Start">
+                                <Button BackgroundColor="Black" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnBorderColorClicked"/>
+                                <Button BackgroundColor="Red" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnBorderColorClicked"/>
+                                <Button BackgroundColor="Blue" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnBorderColorClicked"/>
+                                <Button BackgroundColor="Green" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnBorderColorClicked"/>
+                                <Button BackgroundColor="Gray" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnBorderColorClicked"/>
+                            </FlexLayout>
+                            <Stepper Grid.Column="1"
+                                     x:Name="BorderWidthStepper" 
+                                     Minimum="0" 
+                                     Maximum="10" 
+                                     ValueChanged="OnBorderWidthChanged"/>
+                        </Grid>
+                        <Label x:Name="BorderWidthValue" 
+                               Text="1 px" 
+                               HorizontalOptions="End"/>
+                    </VerticalStackLayout>
+
+                    <!-- Text Properties -->
+                    <VerticalStackLayout x:Name="TextProperties" 
+                                         IsVisible="False" 
+                                         Spacing="5">
+                        <BoxView HeightRequest="1" BackgroundColor="#CCCCCC"/>
+                        <Label Text="Text" 
+                               FontAttributes="Bold"
+                               FontSize="14"/>
+                        <Editor x:Name="TextContentEntry" 
+                                HeightRequest="80"
+                                TextChanged="OnTextContentChanged"/>
+                        
+                        <Label Text="Font:" FontAttributes="Bold"/>
+                        <Picker x:Name="FontPicker"
+                                SelectedIndexChanged="OnFontChanged">
+                            <Picker.ItemsSource>
+                                <x:Array Type="{x:Type x:String}">
+                                    <x:String>Arial</x:String>
+                                    <x:String>Times New Roman</x:String>
+                                    <x:String>Courier New</x:String>
+                                    <x:String>Verdana</x:String>
+                                    <x:String>Helvetica</x:String>
+                                </x:Array>
+                            </Picker.ItemsSource>
+                        </Picker>
+                        
+                        <Label Text="Size:" FontAttributes="Bold"/>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Slider Grid.Column="0"
+                                    x:Name="FontSizeSlider" 
+                                    Minimum="6" 
+                                    Maximum="72" 
+                                    ValueChanged="OnFontSizeChanged"/>
+                            <Label Grid.Column="1"
+                                   x:Name="FontSizeValue" 
+                                   Text="12 pt" 
+                                   WidthRequest="50"
+                                   VerticalOptions="Center"/>
+                        </Grid>
+                        
+                        <HorizontalStackLayout Spacing="10">
+                            <CheckBox x:Name="BoldCheckBox" 
+                                      CheckedChanged="OnBoldChanged"/>
+                            <Label Text="Bold" VerticalOptions="Center"/>
+                            <CheckBox x:Name="ItalicCheckBox" 
+                                      CheckedChanged="OnItalicChanged"/>
+                            <Label Text="Italic" VerticalOptions="Center"/>
+                            <CheckBox x:Name="UnderlineCheckBox" 
+                                      CheckedChanged="OnUnderlineChanged"/>
+                            <Label Text="Underline" VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+
+                        <Label Text="Color:" FontAttributes="Bold"/>
+                        <FlexLayout Wrap="Wrap" JustifyContent="Start">
+                            <Button BackgroundColor="Black" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnTextColorClicked"/>
+                            <Button BackgroundColor="Red" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnTextColorClicked"/>
+                            <Button BackgroundColor="Blue" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnTextColorClicked"/>
+                            <Button BackgroundColor="Green" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnTextColorClicked"/>
+                            <Button BackgroundColor="White" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnTextColorClicked"/>
+                        </FlexLayout>
+                        
+                        <Label Text="Alignment:" FontAttributes="Bold"/>
+                        <Picker x:Name="AlignmentPicker"
+                                SelectedIndexChanged="OnAlignmentChanged">
+                            <Picker.ItemsSource>
+                                <x:Array Type="{x:Type x:String}">
+                                    <x:String>Left</x:String>
+                                    <x:String>Center</x:String>
+                                    <x:String>Right</x:String>
+                                </x:Array>
+                            </Picker.ItemsSource>
+                        </Picker>
+                    </VerticalStackLayout>
+
+                    <!-- Barcode Properties -->
+                    <VerticalStackLayout x:Name="BarcodeProperties" 
+                                         IsVisible="False" 
+                                         Spacing="5">
+                        <BoxView HeightRequest="1" BackgroundColor="#CCCCCC"/>
+                        <Label Text="Barcode" 
+                               FontAttributes="Bold"
+                               FontSize="14"/>
+                        <Label Text="Data:" FontAttributes="Bold"/>
+                        <Entry x:Name="BarcodeDataEntry" 
+                               TextChanged="OnBarcodeDataChanged"/>
+                        
+                        <Label Text="Type:" FontAttributes="Bold"/>
+                        <Picker x:Name="BarcodeTypePicker"
+                                SelectedIndexChanged="OnBarcodeTypeChanged">
+                            <Picker.ItemsSource>
+                                <x:Array Type="{x:Type x:String}">
+                                    <x:String>CODE128</x:String>
+                                    <x:String>CODE39</x:String>
+                                    <x:String>EAN13</x:String>
+                                    <x:String>UPC</x:String>
+                                </x:Array>
+                            </Picker.ItemsSource>
+                        </Picker>
+                        
+                        <HorizontalStackLayout Spacing="10">
+                            <CheckBox x:Name="ShowTextCheckBox" 
+                                      CheckedChanged="OnShowTextChanged"/>
+                            <Label Text="Show Human Readable" VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+
+                        <Label Text="Color:" FontAttributes="Bold"/>
+                        <FlexLayout Wrap="Wrap" JustifyContent="Start">
+                            <Button BackgroundColor="Black" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnBarcodeColorClicked"/>
+                            <Button BackgroundColor="Blue" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnBarcodeColorClicked"/>
+                            <Button BackgroundColor="Red" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnBarcodeColorClicked"/>
+                        </FlexLayout>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </ScrollView>
+        </Grid>
+
+        <!-- Status Bar -->
+        <Grid Grid.Row="3" 
+              BackgroundColor="#007ACC" 
+              HeightRequest="25">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" 
+                   x:Name="StatusPosition" 
+                   Text="X: 0.00, Y: 0.00" 
+                   TextColor="White"
+                   VerticalOptions="Center"
+                   Padding="10,0"/>
+            <BoxView Grid.Column="1" 
+                     WidthRequest="1" 
+                     BackgroundColor="#005A9E"/>
+            <Label Grid.Column="2" 
+                   x:Name="StatusDimensions" 
+                   Text="Width: 0.00, Height: 0.00" 
+                   TextColor="White"
+                   VerticalOptions="Center"
+                   Padding="10,0"/>
+            <BoxView Grid.Column="3" 
+                     WidthRequest="1" 
+                     BackgroundColor="#005A9E"/>
+            <Label Grid.Column="4" 
+                   x:Name="StatusAngle" 
+                   Text="Angle: 0.0°" 
+                   TextColor="White"
+                   VerticalOptions="Center"
+                   Padding="10,0"/>
+            <BoxView Grid.Column="5" 
+                     WidthRequest="1" 
+                     BackgroundColor="#005A9E"/>
+            <Label Grid.Column="6" 
+                   x:Name="StatusZoom" 
+                   Text="Zoom: 100%" 
+                   TextColor="White"
+                   VerticalOptions="Center"
+                   Padding="10,0"/>
+        </Grid>
+    </Grid>
+</ContentPage>
