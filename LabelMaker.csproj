@@ -1,4 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <!-- Author: Debarun Lahiri -->
+  <!-- GitHub: https://github.com/debarunlahiri/ -->
 
   <PropertyGroup>
     <TargetFrameworks>net7.0-maccatalyst;net7.0-ios</TargetFrameworks>

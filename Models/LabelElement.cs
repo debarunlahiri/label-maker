@@ -1,3 +1,6 @@
+// Author: Debarun Lahiri
+// GitHub: https://github.com/debarunlahiri/
+
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Microsoft.Maui.Graphics;

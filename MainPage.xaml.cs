@@ -1,3 +1,6 @@
+// Author: Debarun Lahiri
+// GitHub: https://github.com/debarunlahiri/
+
 using System.Collections.ObjectModel;
 using System.Text.Json;
 using Microsoft.Maui.Graphics;

@@ -1,3 +1,6 @@
+// Author: Debarun Lahiri
+// GitHub: https://github.com/debarunlahiri/
+
 using Android.App;
 using Android.Content.PM;
 using Android.OS;

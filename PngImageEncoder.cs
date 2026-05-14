@@ -1,3 +1,6 @@
+// Author: Debarun Lahiri
+// GitHub: https://github.com/debarunlahiri/
+
 using System.Buffers.Binary;
 using System.IO.Compression;
 using System.Text;

@@ -1,3 +1,6 @@
+// Author: Debarun Lahiri
+// GitHub: https://github.com/debarunlahiri/
+
 using Microsoft.Extensions.Logging;
 
 namespace LabelMaker;

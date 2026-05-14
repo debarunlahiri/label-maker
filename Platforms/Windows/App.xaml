@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Author: Debarun Lahiri -->
+<!-- GitHub: https://github.com/debarunlahiri/ -->
 <Application
     x:Class="LabelMaker.WinUI.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"

@@ -1,3 +1,6 @@
+// Author: Debarun Lahiri
+// GitHub: https://github.com/debarunlahiri/
+
 using Microsoft.UI.Xaml;
 
 // To learn more about WinUI, the WinUI project structure,
