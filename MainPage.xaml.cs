@@ -3,11 +3,13 @@ using System.Text.Json;
 using Microsoft.Maui.Graphics;
 using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Storage;
+using Microsoft.Maui.Layouts;
 using LabelMaker.Models;
 using ZXing;
 using ZXing.Common;
 using ZXing.QrCode;
 using ZXing.Rendering;
+using RoundRectangle = Microsoft.Maui.Controls.Shapes.RoundRectangle;
 
 namespace LabelMaker;
 
@@ -18,6 +20,7 @@ public partial class MainPage : ContentPage
     private Dictionary<LabelElement, View> _elementViews = new();
     private double _zoomLevel = 1.0;
     private bool _isDragging;
+    private bool _isManipulatingHandle;
     private Point _elementStart;
 
     public ObservableCollection<ObjectListItem> ObjectListItems { get; } = new();
@@ -139,28 +142,37 @@ public partial class MainPage : ContentPage
         AbsoluteLayout.SetLayoutFlags(selectionBorder, AbsoluteLayoutFlags.All);
         container.Children.Add(selectionBorder);
 
-        // Corner handles
-        var topLeftHandle = CreateHandle();
-        var topRightHandle = CreateHandle();
-        var bottomLeftHandle = CreateHandle();
-        var bottomRightHandle = CreateHandle();
+        var selectionHandles = new List<View>
+        {
+            CreateResizeHandle(element, container, ResizeHandleKind.TopLeft),
+            CreateResizeHandle(element, container, ResizeHandleKind.TopCenter),
+            CreateResizeHandle(element, container, ResizeHandleKind.TopRight),
+            CreateResizeHandle(element, container, ResizeHandleKind.MiddleLeft),
+            CreateResizeHandle(element, container, ResizeHandleKind.MiddleRight),
+            CreateResizeHandle(element, container, ResizeHandleKind.BottomLeft),
+            CreateResizeHandle(element, container, ResizeHandleKind.BottomCenter),
+            CreateResizeHandle(element, container, ResizeHandleKind.BottomRight)
+        };
 
-        // Position handles at corners
-        AbsoluteLayout.SetLayoutBounds(topLeftHandle, new Rect(0, 0, 8, 8));
-        AbsoluteLayout.SetLayoutFlags(topLeftHandle, AbsoluteLayoutFlags.PositionProportional);
-        container.Children.Add(topLeftHandle);
+        foreach (var handle in selectionHandles)
+            container.Children.Add(handle);
 
-        AbsoluteLayout.SetLayoutBounds(topRightHandle, new Rect(1, 0, 8, 8));
-        AbsoluteLayout.SetLayoutFlags(topRightHandle, AbsoluteLayoutFlags.PositionProportional);
-        container.Children.Add(topRightHandle);
-
-        AbsoluteLayout.SetLayoutBounds(bottomLeftHandle, new Rect(0, 1, 8, 8));
-        AbsoluteLayout.SetLayoutFlags(bottomLeftHandle, AbsoluteLayoutFlags.PositionProportional);
-        container.Children.Add(bottomLeftHandle);
-
-        AbsoluteLayout.SetLayoutBounds(bottomRightHandle, new Rect(1, 1, 8, 8));
-        AbsoluteLayout.SetLayoutFlags(bottomRightHandle, AbsoluteLayoutFlags.PositionProportional);
-        container.Children.Add(bottomRightHandle);
+        var rotateHandle = CreateRotateHandle(element);
+        var rotateStem = new BoxView
+        {
+            WidthRequest = 2,
+            HeightRequest = 20,
+            BackgroundColor = Color.FromArgb("#2563EB"),
+            IsVisible = false,
+            InputTransparent = true,
+            Margin = new Thickness(0, -20, 0, 0)
+        };
+        AbsoluteLayout.SetLayoutBounds(rotateStem, new Rect(0.5, 0, 2, 20));
+        AbsoluteLayout.SetLayoutFlags(rotateStem, AbsoluteLayoutFlags.PositionProportional);
+        container.Children.Add(rotateStem);
+        container.Children.Add(rotateHandle);
+        selectionHandles.Add(rotateStem);
+        selectionHandles.Add(rotateHandle);
 
         // Add gesture recognizers
         var tapGesture = new TapGestureRecognizer();
@@ -173,11 +185,17 @@ public partial class MainPage : ContentPage
             switch (e.StatusType)
             {
                 case GestureStatus.Started:
+                    if (_isManipulatingHandle)
+                        return;
+
                     _isDragging = true;
                     _elementStart = new Point(element.X, element.Y);
                     SelectElement(element);
                     break;
                 case GestureStatus.Running:
+                    if (_isManipulatingHandle)
+                        return;
+
                     element.X = Math.Max(0, _elementStart.X + e.TotalX);
                     element.Y = Math.Max(0, _elementStart.Y + e.TotalY);
                     UpdateElementPosition(element, container);
@@ -193,6 +211,8 @@ public partial class MainPage : ContentPage
 
         AbsoluteLayout.SetLayoutBounds(container, new Rect(element.X, element.Y, element.Width, element.Height));
         AbsoluteLayout.SetLayoutFlags(container, AbsoluteLayoutFlags.None);
+        container.Rotation = element.Rotation;
+        ApplyElementFlip(element, visualElement);
         
         CanvasArea.Children.Add(container);
         _elementViews[element] = container;
@@ -211,28 +231,182 @@ public partial class MainPage : ContentPage
             else if (e.PropertyName == nameof(LabelElement.IsSelected))
             {
                 selectionBorder.IsVisible = element.IsSelected;
-                topLeftHandle.IsVisible = element.IsSelected;
-                topRightHandle.IsVisible = element.IsSelected;
-                bottomLeftHandle.IsVisible = element.IsSelected;
-                bottomRightHandle.IsVisible = element.IsSelected;
+                foreach (var handle in selectionHandles)
+                    handle.IsVisible = element.IsSelected;
             }
             else if (e.PropertyName == nameof(LabelElement.Rotation))
             {
                 container.Rotation = element.Rotation;
             }
+            else if (e.PropertyName == nameof(LabelElement.IsFlippedHorizontal) ||
+                     e.PropertyName == nameof(LabelElement.IsFlippedVertical))
+            {
+                ApplyElementFlip(element, visualElement);
+            }
         };
     }
 
-    private View CreateHandle()
+    private View CreateHandle(double size = 10, bool isRound = false)
     {
-        return new BoxView
+        return new Border
         {
-            WidthRequest = 8,
-            HeightRequest = 8,
+            WidthRequest = size,
+            HeightRequest = size,
             BackgroundColor = Colors.White,
+            Stroke = Color.FromArgb("#2563EB"),
+            StrokeThickness = 1,
+            StrokeShape = isRound ? new RoundRectangle { CornerRadius = new CornerRadius(size / 2) } : null,
             IsVisible = false,
-            Margin = new Thickness(-4)
+            Margin = new Thickness(-size / 2)
         };
+    }
+
+    private View CreateResizeHandle(LabelElement element, View container, ResizeHandleKind kind)
+    {
+        var handle = CreateHandle();
+        var (x, y) = GetHandleAnchor(kind);
+        AbsoluteLayout.SetLayoutBounds(handle, new Rect(x, y, 10, 10));
+        AbsoluteLayout.SetLayoutFlags(handle, AbsoluteLayoutFlags.PositionProportional);
+
+        double startX = 0;
+        double startY = 0;
+        double startWidth = 0;
+        double startHeight = 0;
+
+        var panGesture = new PanGestureRecognizer();
+        panGesture.PanUpdated += (s, e) =>
+        {
+            switch (e.StatusType)
+            {
+                case GestureStatus.Started:
+                    _isManipulatingHandle = true;
+                    SelectElement(element);
+                    startX = element.X;
+                    startY = element.Y;
+                    startWidth = element.Width;
+                    startHeight = element.Height;
+                    break;
+                case GestureStatus.Running:
+                    ResizeElement(element, kind, startX, startY, startWidth, startHeight, e.TotalX, e.TotalY);
+                    UpdateElementPosition(element, container);
+                    UpdatePropertiesPanel();
+                    UpdateStatusBar();
+                    break;
+                case GestureStatus.Completed:
+                case GestureStatus.Canceled:
+                    _isManipulatingHandle = false;
+                    break;
+            }
+        };
+        handle.GestureRecognizers.Add(panGesture);
+
+        return handle;
+    }
+
+    private View CreateRotateHandle(LabelElement element)
+    {
+        var handle = CreateHandle(14, true);
+        handle.Margin = new Thickness(-7, -34, -7, 0);
+        AbsoluteLayout.SetLayoutBounds(handle, new Rect(0.5, 0, 14, 14));
+        AbsoluteLayout.SetLayoutFlags(handle, AbsoluteLayoutFlags.PositionProportional);
+
+        double startRotation = 0;
+        var panGesture = new PanGestureRecognizer();
+        panGesture.PanUpdated += (s, e) =>
+        {
+            switch (e.StatusType)
+            {
+                case GestureStatus.Started:
+                    _isManipulatingHandle = true;
+                    SelectElement(element);
+                    startRotation = element.Rotation;
+                    break;
+                case GestureStatus.Running:
+                    element.Rotation = NormalizeDegrees(startRotation + e.TotalX);
+                    RotationSlider.Value = element.Rotation;
+                    RotationValue.Text = $"{element.Rotation:F1}°";
+                    UpdateStatusBar();
+                    break;
+                case GestureStatus.Completed:
+                case GestureStatus.Canceled:
+                    _isManipulatingHandle = false;
+                    break;
+            }
+        };
+        handle.GestureRecognizers.Add(panGesture);
+
+        return handle;
+    }
+
+    private static (double X, double Y) GetHandleAnchor(ResizeHandleKind kind)
+    {
+        return kind switch
+        {
+            ResizeHandleKind.TopLeft => (0, 0),
+            ResizeHandleKind.TopCenter => (0.5, 0),
+            ResizeHandleKind.TopRight => (1, 0),
+            ResizeHandleKind.MiddleLeft => (0, 0.5),
+            ResizeHandleKind.MiddleRight => (1, 0.5),
+            ResizeHandleKind.BottomLeft => (0, 1),
+            ResizeHandleKind.BottomCenter => (0.5, 1),
+            ResizeHandleKind.BottomRight => (1, 1),
+            _ => (0.5, 0.5)
+        };
+    }
+
+    private static void ResizeElement(
+        LabelElement element,
+        ResizeHandleKind kind,
+        double startX,
+        double startY,
+        double startWidth,
+        double startHeight,
+        double deltaX,
+        double deltaY)
+    {
+        const double minSize = 12;
+
+        var x = startX;
+        var y = startY;
+        var width = startWidth;
+        var height = startHeight;
+
+        if (kind is ResizeHandleKind.TopLeft or ResizeHandleKind.MiddleLeft or ResizeHandleKind.BottomLeft)
+        {
+            width = Math.Max(minSize, startWidth - deltaX);
+            x = startX + (startWidth - width);
+        }
+        else if (kind is ResizeHandleKind.TopRight or ResizeHandleKind.MiddleRight or ResizeHandleKind.BottomRight)
+        {
+            width = Math.Max(minSize, startWidth + deltaX);
+        }
+
+        if (kind is ResizeHandleKind.TopLeft or ResizeHandleKind.TopCenter or ResizeHandleKind.TopRight)
+        {
+            height = Math.Max(minSize, startHeight - deltaY);
+            y = startY + (startHeight - height);
+        }
+        else if (kind is ResizeHandleKind.BottomLeft or ResizeHandleKind.BottomCenter or ResizeHandleKind.BottomRight)
+        {
+            height = Math.Max(minSize, startHeight + deltaY);
+        }
+
+        element.X = Math.Max(0, x);
+        element.Y = Math.Max(0, y);
+        element.Width = width;
+        element.Height = height;
+    }
+
+    private static double NormalizeDegrees(double value)
+    {
+        var normalized = value % 360;
+        return normalized < 0 ? normalized + 360 : normalized;
+    }
+
+    private static void ApplyElementFlip(LabelElement element, View visualElement)
+    {
+        visualElement.ScaleX = element.IsFlippedHorizontal ? -1 : 1;
+        visualElement.ScaleY = element.IsFlippedVertical ? -1 : 1;
     }
 
     private View CreateVisualForElement(LabelElement element)
@@ -352,34 +526,53 @@ public partial class MainPage : ContentPage
 
     private View CreateImageVisual(ImageElement element)
     {
+        var grid = new Grid
+        {
+            BackgroundColor = Color.FromArgb("#E5E7EB")
+        };
+
         var image = new Image
         {
             Aspect = Aspect.AspectFit,
-            BackgroundColor = Colors.LightGray
+            BackgroundColor = Colors.Transparent
         };
 
-        if (!string.IsNullOrEmpty(element.ImagePath))
+        var placeholder = new Label
         {
-            try
-            {
-                image.Source = ImageSource.FromFile(element.ImagePath);
-            }
-            catch { }
-        }
+            Text = "Choose image",
+            FontSize = 12,
+            TextColor = Color.FromArgb("#6B7280"),
+            HorizontalOptions = LayoutOptions.Center,
+            VerticalOptions = LayoutOptions.Center
+        };
+
+        grid.Children.Add(image);
+        grid.Children.Add(placeholder);
+
+        UpdateImageSource(element, image, placeholder);
 
         element.PropertyChanged += (s, e) =>
         {
-            if (e.PropertyName == nameof(ImageElement.ImagePath) && !string.IsNullOrEmpty(element.ImagePath))
+            if (e.PropertyName == nameof(ImageElement.ImagePath))
             {
-                try
-                {
-                    image.Source = ImageSource.FromFile(element.ImagePath);
-                }
-                catch { }
+                MainThread.BeginInvokeOnMainThread(() => UpdateImageSource(element, image, placeholder));
             }
         };
 
-        return image;
+        return grid;
+    }
+
+    private static void UpdateImageSource(ImageElement element, Image image, Label placeholder)
+    {
+        if (string.IsNullOrWhiteSpace(element.ImagePath) || !File.Exists(element.ImagePath))
+        {
+            image.Source = null;
+            placeholder.IsVisible = true;
+            return;
+        }
+
+        image.Source = ImageSource.FromFile(element.ImagePath);
+        placeholder.IsVisible = false;
     }
 
     private View CreateBarcodeVisual(BarcodeElement element)
@@ -450,13 +643,8 @@ public partial class MainPage : ContentPage
             };
 
             var pixelData = writer.Write(element.Data);
-            var bitmap = new SkiaSharp.SKBitmap(pixelData.Width, pixelData.Height);
-            var ptr = bitmap.GetPixels();
-            System.Runtime.InteropServices.Marshal.Copy(pixelData.Pixels, 0, ptr, pixelData.Pixels.Length);
-            
-            using var data = bitmap.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100);
-            using var stream = new MemoryStream(data.ToArray());
-            image.Source = ImageSource.FromStream(() => new MemoryStream(data.ToArray()));
+            var pngBytes = PngImageEncoder.Encode(pixelData);
+            image.Source = ImageSource.FromStream(() => new MemoryStream(pngBytes));
         }
         catch
         {
@@ -500,12 +688,8 @@ public partial class MainPage : ContentPage
             };
 
             var pixelData = writer.Write(element.Data);
-            var bitmap = new SkiaSharp.SKBitmap(pixelData.Width, pixelData.Height);
-            var ptr = bitmap.GetPixels();
-            System.Runtime.InteropServices.Marshal.Copy(pixelData.Pixels, 0, ptr, pixelData.Pixels.Length);
-            
-            using var data = bitmap.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100);
-            image.Source = ImageSource.FromStream(() => new MemoryStream(data.ToArray()));
+            var pngBytes = PngImageEncoder.Encode(pixelData);
+            image.Source = ImageSource.FromStream(() => new MemoryStream(pngBytes));
         }
         catch
         {
@@ -593,22 +777,26 @@ public partial class MainPage : ContentPage
 
     private void UpdatePropertiesPanel()
     {
+        if (_selectedElement is not { } selectedElement)
+            return;
+
         NoSelectionLabel.IsVisible = false;
         CommonProperties.IsVisible = true;
 
         // Update common properties
-        PosXEntry.Text = _selectedElement.X.ToString("F2");
-        PosYEntry.Text = _selectedElement.Y.ToString("F2");
-        WidthEntry.Text = _selectedElement.Width.ToString("F2");
-        HeightEntry.Text = _selectedElement.Height.ToString("F2");
-        RotationSlider.Value = _selectedElement.Rotation;
-        BorderWidthStepper.Value = _selectedElement.BorderWidth;
+        PosXEntry.Text = selectedElement.X.ToString("F2");
+        PosYEntry.Text = selectedElement.Y.ToString("F2");
+        WidthEntry.Text = selectedElement.Width.ToString("F2");
+        HeightEntry.Text = selectedElement.Height.ToString("F2");
+        RotationSlider.Value = selectedElement.Rotation;
+        BorderWidthStepper.Value = selectedElement.BorderWidth;
 
         // Show specific properties based on element type
-        TextProperties.IsVisible = _selectedElement is TextElement;
-        BarcodeProperties.IsVisible = _selectedElement is BarcodeElement;
+        TextProperties.IsVisible = selectedElement is TextElement;
+        ImageProperties.IsVisible = selectedElement is ImageElement;
+        BarcodeProperties.IsVisible = selectedElement is BarcodeElement or QRCodeElement;
 
-        if (_selectedElement is TextElement textElement)
+        if (selectedElement is TextElement textElement)
         {
             TextContentEntry.Text = textElement.Text;
             FontSizeSlider.Value = textElement.FontSize;
@@ -617,10 +805,33 @@ public partial class MainPage : ContentPage
             UnderlineCheckBox.IsChecked = textElement.Underline;
         }
 
-        if (_selectedElement is BarcodeElement barcodeElement)
+        if (selectedElement is ImageElement imageElement)
         {
+            ImagePathLabel.Text = string.IsNullOrWhiteSpace(imageElement.ImagePath)
+                ? "No image selected"
+                : Path.GetFileName(imageElement.ImagePath);
+        }
+
+        if (selectedElement is BarcodeElement barcodeElement)
+        {
+            BarcodePropertiesTitle.Text = "Barcode";
             BarcodeDataEntry.Text = barcodeElement.Data;
+            BarcodeTypeLabel.IsVisible = true;
+            BarcodeTypePicker.IsVisible = true;
+            ShowBarcodeTextOptions.IsVisible = true;
+            BarcodeColorLabel.IsVisible = true;
+            BarcodeColorOptions.IsVisible = true;
             ShowTextCheckBox.IsChecked = barcodeElement.ShowText;
+        }
+        else if (selectedElement is QRCodeElement qrCodeElement)
+        {
+            BarcodePropertiesTitle.Text = "QR Code";
+            BarcodeDataEntry.Text = qrCodeElement.Data;
+            BarcodeTypeLabel.IsVisible = false;
+            BarcodeTypePicker.IsVisible = false;
+            ShowBarcodeTextOptions.IsVisible = false;
+            BarcodeColorLabel.IsVisible = false;
+            BarcodeColorOptions.IsVisible = false;
         }
     }
 
@@ -629,6 +840,7 @@ public partial class MainPage : ContentPage
         NoSelectionLabel.IsVisible = true;
         CommonProperties.IsVisible = false;
         TextProperties.IsVisible = false;
+        ImageProperties.IsVisible = false;
         BarcodeProperties.IsVisible = false;
     }
 
@@ -664,6 +876,18 @@ public partial class MainPage : ContentPage
         _selectedElement.Rotation = e.NewValue;
         RotationValue.Text = $"{e.NewValue:F1}°";
         UpdateStatusBar();
+    }
+
+    private void OnFlipHorizontalClicked(object sender, EventArgs e)
+    {
+        if (_selectedElement == null) return;
+        _selectedElement.IsFlippedHorizontal = !_selectedElement.IsFlippedHorizontal;
+    }
+
+    private void OnFlipVerticalClicked(object sender, EventArgs e)
+    {
+        if (_selectedElement == null) return;
+        _selectedElement.IsFlippedVertical = !_selectedElement.IsFlippedVertical;
     }
 
     private void OnBorderWidthChanged(object sender, ValueChangedEventArgs e)
@@ -747,11 +971,69 @@ public partial class MainPage : ContentPage
         }
     }
 
+    private async void OnChooseImageClicked(object sender, EventArgs e)
+    {
+        if (_selectedElement is not ImageElement imageElement)
+            return;
+
+        try
+        {
+            var result = await FilePicker.Default.PickAsync(new PickOptions
+            {
+                PickerTitle = "Choose an image",
+                FileTypes = ImageFileTypes
+            });
+
+            if (result == null)
+                return;
+
+            var localPath = await ImportImageAsync(result);
+            imageElement.ImagePath = localPath;
+            ImagePathLabel.Text = Path.GetFileName(result.FileName);
+            UpdateObjectList();
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Image", $"Could not open image: {ex.Message}", "OK");
+        }
+    }
+
+    private static async Task<string> ImportImageAsync(FileResult result)
+    {
+        var imageDirectory = Path.Combine(FileSystem.AppDataDirectory, "ImportedImages");
+        Directory.CreateDirectory(imageDirectory);
+
+        var extension = Path.GetExtension(result.FileName);
+        if (string.IsNullOrWhiteSpace(extension))
+            extension = ".img";
+
+        var localPath = Path.Combine(imageDirectory, $"{Guid.NewGuid():N}{extension}");
+
+        await using var source = await result.OpenReadAsync();
+        await using var destination = File.Create(localPath);
+        await source.CopyToAsync(destination);
+
+        return localPath;
+    }
+
+    private static readonly FilePickerFileType ImageFileTypes = new(new Dictionary<DevicePlatform, IEnumerable<string>>
+    {
+        { DevicePlatform.iOS, new[] { "public.image" } },
+        { DevicePlatform.MacCatalyst, new[] { "public.image" } },
+        { DevicePlatform.Android, new[] { "image/*" } },
+        { DevicePlatform.WinUI, new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" } }
+    });
+
     private void OnBarcodeDataChanged(object sender, TextChangedEventArgs e)
     {
         if (_selectedElement is BarcodeElement barcodeElement)
         {
             barcodeElement.Data = BarcodeDataEntry.Text;
+            UpdateObjectList();
+        }
+        else if (_selectedElement is QRCodeElement qrCodeElement)
+        {
+            qrCodeElement.Data = BarcodeDataEntry.Text;
             UpdateObjectList();
         }
     }
@@ -1061,6 +1343,18 @@ public class ObjectListItem
     public string Name { get; set; } = "";
 }
 
+public enum ResizeHandleKind
+{
+    TopLeft,
+    TopCenter,
+    TopRight,
+    MiddleLeft,
+    MiddleRight,
+    BottomLeft,
+    BottomCenter,
+    BottomRight
+}
+
 public class HorizontalRulerDrawable : IDrawable
 {
     private readonly float _width;
@@ -1072,11 +1366,12 @@ public class HorizontalRulerDrawable : IDrawable
 
     public void Draw(ICanvas canvas, RectF dirtyRect)
     {
-        canvas.FillColor = Colors.LightGray;
+        canvas.FillColor = Color.FromArgb("#E5E7EB");
         canvas.FillRectangle(dirtyRect);
         
-        canvas.StrokeColor = Colors.Gray;
+        canvas.StrokeColor = Color.FromArgb("#9CA3AF");
         canvas.StrokeSize = 1;
+        canvas.FontColor = Color.FromArgb("#4B5563");
         
         for (int i = 0; i < _width; i += 10)
         {
@@ -1103,11 +1398,12 @@ public class VerticalRulerDrawable : IDrawable
 
     public void Draw(ICanvas canvas, RectF dirtyRect)
     {
-        canvas.FillColor = Colors.LightGray;
+        canvas.FillColor = Color.FromArgb("#E5E7EB");
         canvas.FillRectangle(dirtyRect);
         
-        canvas.StrokeColor = Colors.Gray;
+        canvas.StrokeColor = Color.FromArgb("#9CA3AF");
         canvas.StrokeSize = 1;
+        canvas.FontColor = Color.FromArgb("#4B5563");
         
         for (int i = 0; i < _height; i += 10)
         {
@@ -1136,7 +1432,7 @@ public class GridDrawable : IDrawable
 
     public void Draw(ICanvas canvas, RectF dirtyRect)
     {
-        canvas.StrokeColor = Color.FromArgb("#E0E0E0");
+        canvas.StrokeColor = Color.FromArgb("#E5E7EB");
         canvas.StrokeSize = 0.5f;
         
         for (int x = 0; x < _width; x += 20)

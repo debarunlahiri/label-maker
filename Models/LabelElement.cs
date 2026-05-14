@@ -25,6 +25,8 @@ public class LabelElement : INotifyPropertyChanged
     private double _height;
     private double _rotation;
     private bool _isSelected;
+    private bool _isFlippedHorizontal;
+    private bool _isFlippedVertical;
     private Color _backgroundColor = Colors.Transparent;
     private Color _borderColor = Colors.Black;
     private double _borderWidth = 1;
@@ -77,6 +79,18 @@ public class LabelElement : INotifyPropertyChanged
         set { _isSelected = value; OnPropertyChanged(); }
     }
 
+    public bool IsFlippedHorizontal
+    {
+        get => _isFlippedHorizontal;
+        set { _isFlippedHorizontal = value; OnPropertyChanged(); }
+    }
+
+    public bool IsFlippedVertical
+    {
+        get => _isFlippedVertical;
+        set { _isFlippedVertical = value; OnPropertyChanged(); }
+    }
+
     public Color BackgroundColor
     {
         get => _backgroundColor;
@@ -95,9 +109,9 @@ public class LabelElement : INotifyPropertyChanged
         set { _borderWidth = value; OnPropertyChanged(); }
     }
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
-    protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }

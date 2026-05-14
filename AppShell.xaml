@@ -5,6 +5,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:LabelMaker"
     Shell.FlyoutBehavior="Disabled"
+    Shell.BackgroundColor="#F8FAFC"
+    Shell.ForegroundColor="#111827"
+    Shell.TitleColor="#111827"
+    Shell.DisabledColor="#9CA3AF"
+    Shell.UnselectedColor="#6B7280"
     Title="Label Maker">
 
     <ShellContent

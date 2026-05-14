@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="456" height="456" viewBox="0 0 456 456" xmlns="http://www.w3.org/2000/svg">
   <rect width="456" height="456" fill="#512BD4"/>
-  <text x="228" y="240" font-family="Arial" font-size="100" fill="white" text-anchor="middle" dominant-baseline="middle">Label Maker</text>
+  <rect x="108" y="116" width="240" height="224" rx="24" fill="white"/>
+  <rect x="136" y="156" width="184" height="28" rx="8" fill="#512BD4"/>
+  <rect x="136" y="214" width="136" height="24" rx="8" fill="#512BD4"/>
+  <rect x="136" y="266" width="184" height="24" rx="8" fill="#512BD4"/>
 </svg>

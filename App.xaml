@@ -5,6 +5,39 @@
              x:Class="LabelMaker.App">
     <Application.Resources>
         <ResourceDictionary>
+            <Color x:Key="TextPrimary">#111827</Color>
+            <Color x:Key="TextSecondary">#6B7280</Color>
+            <Color x:Key="PanelBackground">#FFFFFF</Color>
+            <Color x:Key="InputBackground">#FFFFFF</Color>
+            <Color x:Key="InputBorder">#D1D5DB</Color>
+            <Color x:Key="Accent">#2563EB</Color>
+
+            <Style TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+            </Style>
+
+            <Style TargetType="Entry">
+                <Setter Property="BackgroundColor" Value="{StaticResource InputBackground}" />
+                <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+                <Setter Property="PlaceholderColor" Value="{StaticResource TextSecondary}" />
+                <Setter Property="HeightRequest" Value="34" />
+                <Setter Property="FontSize" Value="13" />
+            </Style>
+
+            <Style TargetType="Editor">
+                <Setter Property="BackgroundColor" Value="{StaticResource InputBackground}" />
+                <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+                <Setter Property="PlaceholderColor" Value="{StaticResource TextSecondary}" />
+                <Setter Property="FontSize" Value="13" />
+            </Style>
+
+            <Style TargetType="Picker">
+                <Setter Property="BackgroundColor" Value="{StaticResource InputBackground}" />
+                <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+                <Setter Property="TitleColor" Value="{StaticResource TextSecondary}" />
+                <Setter Property="HeightRequest" Value="34" />
+                <Setter Property="FontSize" Value="13" />
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

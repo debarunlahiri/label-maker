@@ -3,142 +3,174 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:LabelMaker"
              x:Class="LabelMaker.MainPage"
-             Title="Label Maker - Professional Label Designer"
-             BackgroundColor="#E8E8E8">
+             Title="Label Maker"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="#F3F4F6">
 
-    <Grid RowDefinitions="Auto,Auto,*,Auto">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="ToolbarButton" TargetType="Button">
+                <Setter Property="FontSize" Value="13" />
+                <Setter Property="HeightRequest" Value="34" />
+                <Setter Property="MinimumWidthRequest" Value="48" />
+                <Setter Property="Padding" Value="12,0" />
+                <Setter Property="CornerRadius" Value="6" />
+                <Setter Property="BackgroundColor" Value="#FFFFFF" />
+                <Setter Property="BorderColor" Value="#D1D5DB" />
+                <Setter Property="BorderWidth" Value="1" />
+                <Setter Property="TextColor" Value="#1F2937" />
+            </Style>
+
+            <Style x:Key="DangerToolbarButton" TargetType="Button" BasedOn="{StaticResource ToolbarButton}">
+                <Setter Property="TextColor" Value="#B91C1C" />
+                <Setter Property="BorderColor" Value="#FCA5A5" />
+            </Style>
+
+            <Style x:Key="PanelTitle" TargetType="Label">
+                <Setter Property="FontSize" Value="13" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="TextColor" Value="#111827" />
+                <Setter Property="Padding" Value="14,0" />
+                <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
+
+            <Style x:Key="FieldLabel" TargetType="Label">
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="TextColor" Value="#4B5563" />
+                <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
+
+            <Style x:Key="SwatchButton" TargetType="Button">
+                <Setter Property="WidthRequest" Value="26" />
+                <Setter Property="HeightRequest" Value="26" />
+                <Setter Property="CornerRadius" Value="4" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="Margin" Value="2" />
+                <Setter Property="BorderColor" Value="#CBD5E1" />
+                <Setter Property="BorderWidth" Value="1" />
+            </Style>
+
+            <Style x:Key="SectionCard" TargetType="Border">
+                <Setter Property="BackgroundColor" Value="#F8FAFC" />
+                <Setter Property="Stroke" Value="#E5E7EB" />
+                <Setter Property="StrokeThickness" Value="1" />
+                <Setter Property="StrokeShape" Value="RoundRectangle 8" />
+                <Setter Property="Padding" Value="12" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.MenuBarItems>
+        <MenuBarItem Text="File">
+            <MenuFlyoutItem Text="New" Clicked="OnNewLabelClicked" />
+            <MenuFlyoutItem Text="Open..." Clicked="OnLoadClicked" />
+            <MenuFlyoutItem Text="Save" Clicked="OnSaveClicked" />
+            <MenuFlyoutSeparator />
+            <MenuFlyoutItem Text="Print..." Clicked="OnPrintClicked" />
+            <MenuFlyoutSeparator />
+            <MenuFlyoutItem Text="Exit" Clicked="OnExitClicked" />
+        </MenuBarItem>
+        <MenuBarItem Text="Edit">
+            <MenuFlyoutItem Text="Delete" Clicked="OnDeleteClicked" />
+            <MenuFlyoutSeparator />
+            <MenuFlyoutItem Text="Select All" />
+        </MenuBarItem>
+        <MenuBarItem Text="Create">
+            <MenuFlyoutItem Text="Text" Clicked="OnAddTextClicked" />
+            <MenuFlyoutItem Text="Rectangle" Clicked="OnAddRectangleClicked" />
+            <MenuFlyoutItem Text="Circle" Clicked="OnAddCircleClicked" />
+            <MenuFlyoutItem Text="Line" Clicked="OnAddLineClicked" />
+            <MenuFlyoutItem Text="Image" Clicked="OnAddImageClicked" />
+            <MenuFlyoutItem Text="Barcode" Clicked="OnAddBarcodeClicked" />
+            <MenuFlyoutItem Text="QR Code" Clicked="OnAddQRCodeClicked" />
+        </MenuBarItem>
+        <MenuBarItem Text="View">
+            <MenuFlyoutItem Text="Zoom In" Clicked="OnZoomInClicked" />
+            <MenuFlyoutItem Text="Zoom Out" Clicked="OnZoomOutClicked" />
+        </MenuBarItem>
+        <MenuBarItem Text="Arrange">
+            <MenuFlyoutItem Text="Bring to Front" />
+            <MenuFlyoutItem Text="Send to Back" />
+        </MenuBarItem>
+    </ContentPage.MenuBarItems>
+
+    <Grid RowDefinitions="Auto,*,Auto">
         
-        <!-- Menu Bar -->
-        <MenuBar Grid.Row="0" BackgroundColor="#F0F0F0">
-            <MenuBarItem Text="File">
-                <MenuFlyoutItem Text="New" Clicked="OnNewLabelClicked" />
-                <MenuFlyoutItem Text="Open..." Clicked="OnLoadClicked" />
-                <MenuFlyoutItem Text="Save" Clicked="OnSaveClicked" />
-                <MenuFlyoutSeparator />
-                <MenuFlyoutItem Text="Print..." Clicked="OnPrintClicked" />
-                <MenuFlyoutSeparator />
-                <MenuFlyoutItem Text="Exit" Clicked="OnExitClicked" />
-            </MenuBarItem>
-            <MenuBarItem Text="Edit">
-                <MenuFlyoutItem Text="Delete" Clicked="OnDeleteClicked" />
-                <MenuFlyoutSeparator />
-                <MenuFlyoutItem Text="Select All" />
-            </MenuBarItem>
-            <MenuBarItem Text="Create">
-                <MenuFlyoutItem Text="Text" Clicked="OnAddTextClicked" />
-                <MenuFlyoutItem Text="Rectangle" Clicked="OnAddRectangleClicked" />
-                <MenuFlyoutItem Text="Circle" Clicked="OnAddCircleClicked" />
-                <MenuFlyoutItem Text="Line" Clicked="OnAddLineClicked" />
-                <MenuFlyoutItem Text="Image" Clicked="OnAddImageClicked" />
-                <MenuFlyoutItem Text="Barcode" Clicked="OnAddBarcodeClicked" />
-                <MenuFlyoutItem Text="QR Code" Clicked="OnAddQRCodeClicked" />
-            </MenuBarItem>
-            <MenuBarItem Text="View">
-                <MenuFlyoutItem Text="Zoom In" Clicked="OnZoomInClicked" />
-                <MenuFlyoutItem Text="Zoom Out" Clicked="OnZoomOutClicked" />
-            </MenuBarItem>
-            <MenuBarItem Text="Arrange">
-                <MenuFlyoutItem Text="Bring to Front" />
-                <MenuFlyoutItem Text="Send to Back" />
-            </MenuBarItem>
-        </MenuBar>
-
         <!-- Icon Toolbar -->
-        <Grid Grid.Row="1" 
-              BackgroundColor="#E0E0E0" 
-              HeightRequest="50">
+        <Grid Grid.Row="0" 
+              BackgroundColor="#F8FAFC" 
+              HeightRequest="52"
+              Padding="12,8">
             <ScrollView Orientation="Horizontal">
-                <HorizontalStackLayout Spacing="2" Padding="5" VerticalOptions="Center">
+                <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+                    <VerticalStackLayout Spacing="0"
+                                         WidthRequest="128"
+                                         VerticalOptions="Center">
+                        <Label Text="Label Maker"
+                               FontAttributes="Bold"
+                               FontSize="14"
+                               TextColor="#111827"/>
+                        <Label Text="Designer"
+                               FontSize="11"
+                               TextColor="#6B7280"/>
+                    </VerticalStackLayout>
+                    <BoxView WidthRequest="1" 
+                             HeightRequest="28" 
+                             BackgroundColor="#CBD5E1" 
+                             VerticalOptions="Center"/>
                     
                     <!-- File Operations -->
                     <Button Text="New" 
-                            FontSize="12"
-                            WidthRequest="50" 
-                            HeightRequest="36"
-                            BackgroundColor="Transparent"
+                            Style="{StaticResource ToolbarButton}"
                             Clicked="OnNewLabelClicked"/>
                     <Button Text="Open" 
-                            FontSize="12"
-                            WidthRequest="50" 
-                            HeightRequest="36"
-                            BackgroundColor="Transparent"
+                            Style="{StaticResource ToolbarButton}"
                             Clicked="OnLoadClicked"/>
                     <Button Text="Save" 
-                            FontSize="12"
-                            WidthRequest="50" 
-                            HeightRequest="36"
-                            BackgroundColor="Transparent"
+                            Style="{StaticResource ToolbarButton}"
                             Clicked="OnSaveClicked"/>
                     <BoxView WidthRequest="1" 
-                             HeightRequest="30" 
-                             BackgroundColor="#CCCCCC" 
+                             HeightRequest="28" 
+                             BackgroundColor="#CBD5E1" 
                              VerticalOptions="Center"/>
                     
                     <!-- Elements -->
                     <Button Text="Text" 
-                            FontSize="12"
-                            WidthRequest="50" 
-                            HeightRequest="36"
-                            BackgroundColor="Transparent"
+                            Style="{StaticResource ToolbarButton}"
                             Clicked="OnAddTextClicked"/>
                     <Button Text="Rect" 
-                            FontSize="12"
-                            WidthRequest="50" 
-                            HeightRequest="36"
-                            BackgroundColor="Transparent"
+                            Style="{StaticResource ToolbarButton}"
                             Clicked="OnAddRectangleClicked"/>
                     <Button Text="Circle" 
-                            FontSize="12"
-                            WidthRequest="50" 
-                            HeightRequest="36"
-                            BackgroundColor="Transparent"
+                            Style="{StaticResource ToolbarButton}"
                             Clicked="OnAddCircleClicked"/>
                     <Button Text="Line" 
-                            FontSize="12"
-                            WidthRequest="50" 
-                            HeightRequest="36"
-                            BackgroundColor="Transparent"
+                            Style="{StaticResource ToolbarButton}"
                             Clicked="OnAddLineClicked"/>
                     <Button Text="Image" 
-                            FontSize="12"
-                            WidthRequest="50" 
-                            HeightRequest="36"
-                            BackgroundColor="Transparent"
+                            Style="{StaticResource ToolbarButton}"
                             Clicked="OnAddImageClicked"/>
                     <Button Text="Bar" 
-                            FontSize="12"
-                            WidthRequest="50" 
-                            HeightRequest="36"
-                            BackgroundColor="Transparent"
+                            Style="{StaticResource ToolbarButton}"
                             Clicked="OnAddBarcodeClicked"/>
                     <Button Text="QR" 
-                            FontSize="12"
-                            WidthRequest="50" 
-                            HeightRequest="36"
-                            BackgroundColor="Transparent"
+                            Style="{StaticResource ToolbarButton}"
                             Clicked="OnAddQRCodeClicked"/>
                     <BoxView WidthRequest="1" 
-                             HeightRequest="30" 
-                             BackgroundColor="#CCCCCC" 
+                             HeightRequest="28" 
+                             BackgroundColor="#CBD5E1" 
                              VerticalOptions="Center"/>
                     
                     <!-- Actions -->
                     <Button Text="Delete" 
-                            FontSize="12"
-                            WidthRequest="50" 
-                            HeightRequest="36"
-                            BackgroundColor="Transparent"
-                            TextColor="Red"
+                            Style="{StaticResource DangerToolbarButton}"
                             Clicked="OnDeleteClicked"/>
                     <Button Text="Print" 
-                            FontSize="12"
-                            WidthRequest="50" 
-                            HeightRequest="36"
-                            BackgroundColor="Transparent"
+                            Style="{StaticResource ToolbarButton}"
                             Clicked="OnPrintClicked"/>
                     <BoxView WidthRequest="1" 
-                             HeightRequest="30" 
-                             BackgroundColor="#CCCCCC" 
+                             HeightRequest="28" 
+                             BackgroundColor="#CBD5E1" 
                              VerticalOptions="Center"/>
                     
                     <!-- Zoom -->
@@ -146,38 +178,40 @@
                             FontSize="16"
                             WidthRequest="30" 
                             HeightRequest="30"
-                            BackgroundColor="Transparent"
+                            Style="{StaticResource ToolbarButton}"
                             Clicked="OnZoomOutClicked"/>
                     <Label x:Name="ZoomLabel" 
                            Text="100%" 
                            VerticalOptions="Center" 
                            WidthRequest="50"
-                           HorizontalTextAlignment="Center"/>
+                           HorizontalTextAlignment="Center"
+                           TextColor="#374151"/>
                     <Button Text="+" 
                             FontSize="16"
                             WidthRequest="30" 
                             HeightRequest="30"
-                            BackgroundColor="Transparent"
+                            Style="{StaticResource ToolbarButton}"
                             Clicked="OnZoomInClicked"/>
                     <BoxView WidthRequest="1" 
-                             HeightRequest="30" 
-                             BackgroundColor="#CCCCCC" 
+                             HeightRequest="28" 
+                             BackgroundColor="#CBD5E1" 
                              VerticalOptions="Center"/>
                     <CheckBox x:Name="GridCheckBox"
                               IsChecked="True"
                               CheckedChanged="OnGridToggleChanged"/>
                     <Label Text="Grid" 
                            VerticalOptions="Center" 
+                           TextColor="#374151"
                            Margin="-5,0,0,0"/>
                 </HorizontalStackLayout>
             </ScrollView>
         </Grid>
 
         <!-- Main Workspace -->
-        <Grid Grid.Row="2" ColumnDefinitions="200,*,250">
+        <Grid Grid.Row="1" ColumnDefinitions="220,*,300">
             
             <!-- Left Panel - Object Tree -->
-            <Grid Grid.Column="0" BackgroundColor="#F5F5F5">
+            <Grid Grid.Column="0" BackgroundColor="#FFFFFF">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
@@ -186,11 +220,9 @@
                 </Grid.RowDefinitions>
                 
                 <!-- Objects Header -->
-                <Grid Grid.Row="0" BackgroundColor="#E0E0E0" HeightRequest="30">
+                <Grid Grid.Row="0" BackgroundColor="#F8FAFC" HeightRequest="36">
                     <Label Text="Objects" 
-                           FontAttributes="Bold" 
-                           VerticalOptions="Center" 
-                           Padding="10,0"/>
+                           Style="{StaticResource PanelTitle}"/>
                 </Grid>
                 
                 <!-- Object Tree -->
@@ -200,12 +232,15 @@
                                     SelectionChanged="OnObjectListSelectionChanged">
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="local:ObjectListItem">
-                                <Grid Padding="10,5" ColumnDefinitions="30,*">
+                                <Grid Padding="14,8" ColumnDefinitions="28,*">
                                     <Label Grid.Column="0" 
                                            Text="[]"
+                                           TextColor="#6B7280"
                                            VerticalOptions="Center"/>
                                     <Label Grid.Column="1" 
                                            Text="{Binding Name}" 
+                                           FontSize="13"
+                                           TextColor="#111827"
                                            VerticalOptions="Center"/>
                                 </Grid>
                             </DataTemplate>
@@ -214,21 +249,22 @@
                 </ScrollView>
                 
                 <!-- Layers Header -->
-                <Grid Grid.Row="2" BackgroundColor="#E0E0E0" HeightRequest="30">
+                <Grid Grid.Row="2" BackgroundColor="#F8FAFC" HeightRequest="36">
                     <Label Text="Layers" 
-                           FontAttributes="Bold" 
-                           VerticalOptions="Center" 
-                           Padding="10,0"/>
+                           Style="{StaticResource PanelTitle}"/>
                 </Grid>
                 
                 <!-- Layers List -->
                 <ScrollView Grid.Row="3">
-                    <VerticalStackLayout x:Name="LayersList" Padding="5">
-                        <Border BackgroundColor="#FFF9C4" 
-                                Padding="5" 
-                                Stroke="#FBC02D"
-                                StrokeThickness="1">
+                    <VerticalStackLayout x:Name="LayersList" Padding="10" Spacing="8">
+                        <Border BackgroundColor="#EFF6FF" 
+                                Padding="10,8" 
+                                Stroke="#93C5FD"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 6">
                             <Label Text="Layer 1" 
+                                   FontSize="13"
+                                   TextColor="#1D4ED8"
                                    FontAttributes="Bold"/>
                         </Border>
                     </VerticalStackLayout>
@@ -236,22 +272,22 @@
             </Grid>
 
             <!-- Center - Canvas Area -->
-            <Grid Grid.Column="1" BackgroundColor="#C0C0C0">
-                <Grid RowDefinitions="30,*,30" ColumnDefinitions="30,*,30">
+            <Grid Grid.Column="1" BackgroundColor="#D1D5DB">
+                <Grid RowDefinitions="28,*,28" ColumnDefinitions="28,*,28">
                     
                     <!-- Top Ruler -->
                     <Grid Grid.Row="0" 
                           Grid.Column="1" 
-                          BackgroundColor="#F0F0F0" 
-                          HeightRequest="30">
+                          BackgroundColor="#E5E7EB" 
+                          HeightRequest="28">
                         <GraphicsView x:Name="TopRuler"/>
                     </Grid>
                     
                     <!-- Left Ruler -->
                     <Grid Grid.Row="1" 
                           Grid.Column="0" 
-                          BackgroundColor="#F0F0F0" 
-                          WidthRequest="30">
+                          BackgroundColor="#E5E7EB" 
+                          WidthRequest="28">
                         <GraphicsView x:Name="LeftRuler"/>
                     </Grid>
                     
@@ -259,11 +295,11 @@
                     <ScrollView Grid.Row="1" 
                                 Grid.Column="1"
                                 x:Name="CanvasScrollView"
-                                BackgroundColor="#909090">
+                                BackgroundColor="#9CA3AF">
                         <AbsoluteLayout x:Name="CanvasContainer"
                                         HorizontalOptions="Center"
                                         VerticalOptions="Center"
-                                        Margin="20">
+                                        Margin="32">
                             <!-- Grid Background -->
                             <GraphicsView x:Name="GridBackground"
                                           AbsoluteLayout.LayoutBounds="0,0,1,1"
@@ -273,8 +309,9 @@
                             <!-- White Canvas -->
                             <Border x:Name="CanvasBorder"
                                     BackgroundColor="White"
-                                    Stroke="Black"
+                                    Stroke="#D1D5DB"
                                     StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 2"
                                     AbsoluteLayout.LayoutBounds="0,0,400,300"
                                     AbsoluteLayout.LayoutFlags="None">
                                 <AbsoluteLayout x:Name="CanvasArea"
@@ -290,77 +327,81 @@
                     <!-- Bottom Ruler corner -->
                     <Grid Grid.Row="2" 
                           Grid.Column="0" 
-                          BackgroundColor="#F0F0F0"/>
+                          BackgroundColor="#E5E7EB"/>
                     
                     <!-- Bottom Ruler -->
                     <Grid Grid.Row="2" 
                           Grid.Column="1" 
-                          BackgroundColor="#F0F0F0" 
-                          HeightRequest="30">
+                          BackgroundColor="#E5E7EB" 
+                          HeightRequest="28">
                         <GraphicsView x:Name="BottomRuler"/>
                     </Grid>
                     
                     <!-- Right Ruler corner -->
                     <Grid Grid.Row="0" 
                           Grid.Column="2" 
-                          BackgroundColor="#F0F0F0"/>
+                          BackgroundColor="#E5E7EB"/>
                     
                     <!-- Right Ruler -->
                     <Grid Grid.Row="1" 
                           Grid.Column="2" 
-                          BackgroundColor="#F0F0F0" 
-                          WidthRequest="30">
+                          BackgroundColor="#E5E7EB" 
+                          WidthRequest="28">
                         <GraphicsView x:Name="RightRuler"/>
                     </Grid>
                     
                     <!-- Bottom-Right Corner -->
                     <Grid Grid.Row="2" 
                           Grid.Column="2" 
-                          BackgroundColor="#F0F0F0"/>
+                          BackgroundColor="#E5E7EB"/>
                 </Grid>
             </Grid>
 
             <!-- Right Panel - Properties -->
-            <ScrollView Grid.Column="2" BackgroundColor="#F8F9FA">
+            <ScrollView Grid.Column="2" BackgroundColor="#FFFFFF">
                 <VerticalStackLayout x:Name="PropertiesPanel" 
-                                     Padding="10" 
-                                     Spacing="10">
+                                     Padding="16,14" 
+                                     Spacing="14">
                     <Label Text="Properties" 
                            FontSize="16" 
                            FontAttributes="Bold"
-                           HorizontalOptions="Center"/>
+                           TextColor="#111827"/>
                     <BoxView HeightRequest="1" 
-                             BackgroundColor="#CCCCCC"/>
+                             BackgroundColor="#E5E7EB"/>
                     
                     <!-- No Selection Message -->
-                    <Label x:Name="NoSelectionLabel"
-                           Text="Select an object to edit properties"
-                           TextColor="Gray"
-                           HorizontalOptions="Center"
-                           HorizontalTextAlignment="Center"/>
+                    <Border x:Name="NoSelectionLabel"
+                            Style="{StaticResource SectionCard}">
+                        <Label Text="Select an object to edit properties"
+                               TextColor="#6B7280"
+                               HorizontalOptions="Center"
+                               HorizontalTextAlignment="Center"/>
+                    </Border>
 
                     <!-- Common Properties -->
-                    <VerticalStackLayout x:Name="CommonProperties" 
-                                         IsVisible="False" 
-                                         Spacing="5">
+                    <Border x:Name="CommonProperties"
+                            IsVisible="False"
+                            Style="{StaticResource SectionCard}">
+                        <VerticalStackLayout Spacing="10">
                         <Label Text="Position &amp; Size" 
                                FontAttributes="Bold"
-                               FontSize="14"/>
-                        <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto">
-                            <Label Grid.Row="0" Grid.Column="0" Text="X:" VerticalOptions="Center" WidthRequest="50"/>
+                               FontSize="13"
+                               TextColor="#111827"/>
+                        <Grid ColumnDefinitions="64,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="8" ColumnSpacing="10">
+                            <Label Grid.Row="0" Grid.Column="0" Text="X" Style="{StaticResource FieldLabel}"/>
                             <Entry Grid.Row="0" Grid.Column="1" x:Name="PosXEntry" Keyboard="Numeric" TextChanged="OnPositionChanged"/>
                             
-                            <Label Grid.Row="1" Grid.Column="0" Text="Y:" VerticalOptions="Center" WidthRequest="50"/>
+                            <Label Grid.Row="1" Grid.Column="0" Text="Y" Style="{StaticResource FieldLabel}"/>
                             <Entry Grid.Row="1" Grid.Column="1" x:Name="PosYEntry" Keyboard="Numeric" TextChanged="OnPositionChanged"/>
                             
-                            <Label Grid.Row="2" Grid.Column="0" Text="Width:" VerticalOptions="Center" WidthRequest="50"/>
+                            <Label Grid.Row="2" Grid.Column="0" Text="Width" Style="{StaticResource FieldLabel}"/>
                             <Entry Grid.Row="2" Grid.Column="1" x:Name="WidthEntry" Keyboard="Numeric" TextChanged="OnSizeChanged"/>
                             
-                            <Label Grid.Row="3" Grid.Column="0" Text="Height:" VerticalOptions="Center" WidthRequest="50"/>
+                            <Label Grid.Row="3" Grid.Column="0" Text="Height" Style="{StaticResource FieldLabel}"/>
                             <Entry Grid.Row="3" Grid.Column="1" x:Name="HeightEntry" Keyboard="Numeric" TextChanged="OnSizeChanged"/>
                         </Grid>
 
-                        <Label Text="Rotation:" FontAttributes="Bold"/>
+                        <Label Text="Rotation" FontAttributes="Bold" FontSize="13"/>
                         <Grid ColumnDefinitions="*,Auto">
                             <Slider Grid.Column="0"
                                     x:Name="RotationSlider" 
@@ -371,30 +412,41 @@
                                    x:Name="RotationValue" 
                                    Text="0°" 
                                    WidthRequest="40"
+                                   TextColor="#4B5563"
                                    VerticalOptions="Center"/>
                         </Grid>
 
-                        <Label Text="Background:" FontAttributes="Bold"/>
+                        <Label Text="Transform" FontAttributes="Bold" FontSize="13"/>
+                        <HorizontalStackLayout Spacing="8">
+                            <Button Text="Flip H"
+                                    Style="{StaticResource ToolbarButton}"
+                                    Clicked="OnFlipHorizontalClicked"/>
+                            <Button Text="Flip V"
+                                    Style="{StaticResource ToolbarButton}"
+                                    Clicked="OnFlipVerticalClicked"/>
+                        </HorizontalStackLayout>
+
+                        <Label Text="Background" FontAttributes="Bold" FontSize="13"/>
                         <FlexLayout Wrap="Wrap" JustifyContent="Start">
-                            <Button BackgroundColor="White" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnColorClicked"/>
-                            <Button BackgroundColor="Black" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnColorClicked"/>
-                            <Button BackgroundColor="Red" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnColorClicked"/>
-                            <Button BackgroundColor="Blue" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnColorClicked"/>
-                            <Button BackgroundColor="Green" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnColorClicked"/>
-                            <Button BackgroundColor="Yellow" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnColorClicked"/>
-                            <Button BackgroundColor="Orange" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnColorClicked"/>
-                            <Button BackgroundColor="Purple" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnColorClicked"/>
-                            <Button BackgroundColor="Gray" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnColorClicked"/>
+                            <Button BackgroundColor="White" Style="{StaticResource SwatchButton}" Clicked="OnColorClicked"/>
+                            <Button BackgroundColor="Black" Style="{StaticResource SwatchButton}" Clicked="OnColorClicked"/>
+                            <Button BackgroundColor="Red" Style="{StaticResource SwatchButton}" Clicked="OnColorClicked"/>
+                            <Button BackgroundColor="Blue" Style="{StaticResource SwatchButton}" Clicked="OnColorClicked"/>
+                            <Button BackgroundColor="Green" Style="{StaticResource SwatchButton}" Clicked="OnColorClicked"/>
+                            <Button BackgroundColor="Yellow" Style="{StaticResource SwatchButton}" Clicked="OnColorClicked"/>
+                            <Button BackgroundColor="Orange" Style="{StaticResource SwatchButton}" Clicked="OnColorClicked"/>
+                            <Button BackgroundColor="Purple" Style="{StaticResource SwatchButton}" Clicked="OnColorClicked"/>
+                            <Button BackgroundColor="Gray" Style="{StaticResource SwatchButton}" Clicked="OnColorClicked"/>
                         </FlexLayout>
 
-                        <Label Text="Border:" FontAttributes="Bold"/>
+                        <Label Text="Border" FontAttributes="Bold" FontSize="13"/>
                         <Grid ColumnDefinitions="*,Auto">
                             <FlexLayout Grid.Column="0" Wrap="Wrap" JustifyContent="Start">
-                                <Button BackgroundColor="Black" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnBorderColorClicked"/>
-                                <Button BackgroundColor="Red" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnBorderColorClicked"/>
-                                <Button BackgroundColor="Blue" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnBorderColorClicked"/>
-                                <Button BackgroundColor="Green" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnBorderColorClicked"/>
-                                <Button BackgroundColor="Gray" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnBorderColorClicked"/>
+                                <Button BackgroundColor="Black" Style="{StaticResource SwatchButton}" Clicked="OnBorderColorClicked"/>
+                                <Button BackgroundColor="Red" Style="{StaticResource SwatchButton}" Clicked="OnBorderColorClicked"/>
+                                <Button BackgroundColor="Blue" Style="{StaticResource SwatchButton}" Clicked="OnBorderColorClicked"/>
+                                <Button BackgroundColor="Green" Style="{StaticResource SwatchButton}" Clicked="OnBorderColorClicked"/>
+                                <Button BackgroundColor="Gray" Style="{StaticResource SwatchButton}" Clicked="OnBorderColorClicked"/>
                             </FlexLayout>
                             <Stepper Grid.Column="1"
                                      x:Name="BorderWidthStepper" 
@@ -404,22 +456,24 @@
                         </Grid>
                         <Label x:Name="BorderWidthValue" 
                                Text="1 px" 
+                               TextColor="#4B5563"
                                HorizontalOptions="End"/>
-                    </VerticalStackLayout>
+                        </VerticalStackLayout>
+                    </Border>
 
                     <!-- Text Properties -->
-                    <VerticalStackLayout x:Name="TextProperties" 
-                                         IsVisible="False" 
-                                         Spacing="5">
-                        <BoxView HeightRequest="1" BackgroundColor="#CCCCCC"/>
+                    <Border x:Name="TextProperties"
+                            IsVisible="False"
+                            Style="{StaticResource SectionCard}">
+                        <VerticalStackLayout Spacing="8">
                         <Label Text="Text" 
                                FontAttributes="Bold"
-                               FontSize="14"/>
+                               FontSize="13"/>
                         <Editor x:Name="TextContentEntry" 
                                 HeightRequest="80"
                                 TextChanged="OnTextContentChanged"/>
                         
-                        <Label Text="Font:" FontAttributes="Bold"/>
+                        <Label Text="Font" FontAttributes="Bold" FontSize="13"/>
                         <Picker x:Name="FontPicker"
                                 SelectedIndexChanged="OnFontChanged">
                             <Picker.ItemsSource>
@@ -433,7 +487,7 @@
                             </Picker.ItemsSource>
                         </Picker>
                         
-                        <Label Text="Size:" FontAttributes="Bold"/>
+                        <Label Text="Size" FontAttributes="Bold" FontSize="13"/>
                         <Grid ColumnDefinitions="*,Auto">
                             <Slider Grid.Column="0"
                                     x:Name="FontSizeSlider" 
@@ -444,31 +498,49 @@
                                    x:Name="FontSizeValue" 
                                    Text="12 pt" 
                                    WidthRequest="50"
+                                   TextColor="#4B5563"
                                    VerticalOptions="Center"/>
                         </Grid>
                         
-                        <HorizontalStackLayout Spacing="10">
-                            <CheckBox x:Name="BoldCheckBox" 
-                                      CheckedChanged="OnBoldChanged"/>
-                            <Label Text="Bold" VerticalOptions="Center"/>
-                            <CheckBox x:Name="ItalicCheckBox" 
-                                      CheckedChanged="OnItalicChanged"/>
-                            <Label Text="Italic" VerticalOptions="Center"/>
-                            <CheckBox x:Name="UnderlineCheckBox" 
-                                      CheckedChanged="OnUnderlineChanged"/>
-                            <Label Text="Underline" VerticalOptions="Center"/>
-                        </HorizontalStackLayout>
+                        <FlexLayout Wrap="Wrap"
+                                    AlignItems="Center"
+                                    JustifyContent="Start">
+                            <HorizontalStackLayout Spacing="4"
+                                                   Margin="0,0,12,6">
+                                <CheckBox x:Name="BoldCheckBox"
+                                          CheckedChanged="OnBoldChanged"/>
+                                <Label Text="Bold"
+                                       FontSize="12"
+                                       VerticalOptions="Center"/>
+                            </HorizontalStackLayout>
+                            <HorizontalStackLayout Spacing="4"
+                                                   Margin="0,0,12,6">
+                                <CheckBox x:Name="ItalicCheckBox"
+                                          CheckedChanged="OnItalicChanged"/>
+                                <Label Text="Italic"
+                                       FontSize="12"
+                                       VerticalOptions="Center"/>
+                            </HorizontalStackLayout>
+                            <HorizontalStackLayout Spacing="4"
+                                                   Margin="0,0,12,6">
+                                <CheckBox x:Name="UnderlineCheckBox"
+                                          CheckedChanged="OnUnderlineChanged"/>
+                                <Label Text="Underline"
+                                       FontSize="12"
+                                       VerticalOptions="Center"/>
+                            </HorizontalStackLayout>
+                        </FlexLayout>
 
-                        <Label Text="Color:" FontAttributes="Bold"/>
+                        <Label Text="Color" FontAttributes="Bold" FontSize="13"/>
                         <FlexLayout Wrap="Wrap" JustifyContent="Start">
-                            <Button BackgroundColor="Black" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnTextColorClicked"/>
-                            <Button BackgroundColor="Red" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnTextColorClicked"/>
-                            <Button BackgroundColor="Blue" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnTextColorClicked"/>
-                            <Button BackgroundColor="Green" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnTextColorClicked"/>
-                            <Button BackgroundColor="White" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnTextColorClicked"/>
+                            <Button BackgroundColor="Black" Style="{StaticResource SwatchButton}" Clicked="OnTextColorClicked"/>
+                            <Button BackgroundColor="Red" Style="{StaticResource SwatchButton}" Clicked="OnTextColorClicked"/>
+                            <Button BackgroundColor="Blue" Style="{StaticResource SwatchButton}" Clicked="OnTextColorClicked"/>
+                            <Button BackgroundColor="Green" Style="{StaticResource SwatchButton}" Clicked="OnTextColorClicked"/>
+                            <Button BackgroundColor="White" Style="{StaticResource SwatchButton}" Clicked="OnTextColorClicked"/>
                         </FlexLayout>
                         
-                        <Label Text="Alignment:" FontAttributes="Bold"/>
+                        <Label Text="Alignment" FontAttributes="Bold" FontSize="13"/>
                         <Picker x:Name="AlignmentPicker"
                                 SelectedIndexChanged="OnAlignmentChanged">
                             <Picker.ItemsSource>
@@ -479,21 +551,46 @@
                                 </x:Array>
                             </Picker.ItemsSource>
                         </Picker>
-                    </VerticalStackLayout>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Image Properties -->
+                    <Border x:Name="ImageProperties"
+                            IsVisible="False"
+                            Style="{StaticResource SectionCard}">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Image"
+                                   FontAttributes="Bold"
+                                   FontSize="13"/>
+                            <Button Text="Choose Image..."
+                                    Style="{StaticResource ToolbarButton}"
+                                    HorizontalOptions="Start"
+                                    Clicked="OnChooseImageClicked"/>
+                            <Label x:Name="ImagePathLabel"
+                                   Text="No image selected"
+                                   FontSize="12"
+                                   TextColor="#6B7280"
+                                   LineBreakMode="TailTruncation"/>
+                        </VerticalStackLayout>
+                    </Border>
 
                     <!-- Barcode Properties -->
-                    <VerticalStackLayout x:Name="BarcodeProperties" 
-                                         IsVisible="False" 
-                                         Spacing="5">
-                        <BoxView HeightRequest="1" BackgroundColor="#CCCCCC"/>
-                        <Label Text="Barcode" 
+                    <Border x:Name="BarcodeProperties"
+                            IsVisible="False"
+                            Style="{StaticResource SectionCard}">
+                        <VerticalStackLayout Spacing="8">
+                        <Label x:Name="BarcodePropertiesTitle"
+                               Text="Barcode" 
                                FontAttributes="Bold"
-                               FontSize="14"/>
-                        <Label Text="Data:" FontAttributes="Bold"/>
+                               FontSize="13"/>
+                        <Label Text="Data" FontAttributes="Bold" FontSize="13"/>
                         <Entry x:Name="BarcodeDataEntry" 
                                TextChanged="OnBarcodeDataChanged"/>
                         
-                        <Label Text="Type:" FontAttributes="Bold"/>
+                        <Label x:Name="BarcodeTypeLabel"
+                               Text="Type"
+                               FontAttributes="Bold"
+                               FontSize="13"/>
                         <Picker x:Name="BarcodeTypePicker"
                                 SelectedIndexChanged="OnBarcodeTypeChanged">
                             <Picker.ItemsSource>
@@ -506,27 +603,34 @@
                             </Picker.ItemsSource>
                         </Picker>
                         
-                        <HorizontalStackLayout Spacing="10">
+                        <HorizontalStackLayout x:Name="ShowBarcodeTextOptions"
+                                               Spacing="10">
                             <CheckBox x:Name="ShowTextCheckBox" 
                                       CheckedChanged="OnShowTextChanged"/>
                             <Label Text="Show Human Readable" VerticalOptions="Center"/>
                         </HorizontalStackLayout>
 
-                        <Label Text="Color:" FontAttributes="Bold"/>
-                        <FlexLayout Wrap="Wrap" JustifyContent="Start">
-                            <Button BackgroundColor="Black" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnBarcodeColorClicked"/>
-                            <Button BackgroundColor="Blue" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnBarcodeColorClicked"/>
-                            <Button BackgroundColor="Red" WidthRequest="25" HeightRequest="25" Margin="2" Clicked="OnBarcodeColorClicked"/>
+                        <Label x:Name="BarcodeColorLabel"
+                               Text="Color"
+                               FontAttributes="Bold"
+                               FontSize="13"/>
+                        <FlexLayout x:Name="BarcodeColorOptions"
+                                    Wrap="Wrap"
+                                    JustifyContent="Start">
+                            <Button BackgroundColor="Black" Style="{StaticResource SwatchButton}" Clicked="OnBarcodeColorClicked"/>
+                            <Button BackgroundColor="Blue" Style="{StaticResource SwatchButton}" Clicked="OnBarcodeColorClicked"/>
+                            <Button BackgroundColor="Red" Style="{StaticResource SwatchButton}" Clicked="OnBarcodeColorClicked"/>
                         </FlexLayout>
-                    </VerticalStackLayout>
+                        </VerticalStackLayout>
+                    </Border>
                 </VerticalStackLayout>
             </ScrollView>
         </Grid>
 
         <!-- Status Bar -->
-        <Grid Grid.Row="3" 
-              BackgroundColor="#007ACC" 
-              HeightRequest="25">
+        <Grid Grid.Row="2" 
+              BackgroundColor="#111827" 
+              HeightRequest="28">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
@@ -544,7 +648,7 @@
                    Padding="10,0"/>
             <BoxView Grid.Column="1" 
                      WidthRequest="1" 
-                     BackgroundColor="#005A9E"/>
+                     BackgroundColor="#374151"/>
             <Label Grid.Column="2" 
                    x:Name="StatusDimensions" 
                    Text="Width: 0.00, Height: 0.00" 
@@ -553,7 +657,7 @@
                    Padding="10,0"/>
             <BoxView Grid.Column="3" 
                      WidthRequest="1" 
-                     BackgroundColor="#005A9E"/>
+                     BackgroundColor="#374151"/>
             <Label Grid.Column="4" 
                    x:Name="StatusAngle" 
                    Text="Angle: 0.0°" 
@@ -562,7 +666,7 @@
                    Padding="10,0"/>
             <BoxView Grid.Column="5" 
                      WidthRequest="1" 
-                     BackgroundColor="#005A9E"/>
+                     BackgroundColor="#374151"/>
             <Label Grid.Column="6" 
                    x:Name="StatusZoom" 
                    Text="Zoom: 100%" 
