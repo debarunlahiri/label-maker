@@ -35,9 +35,6 @@ The app provides a WYSIWYG label design workspace with an artboard, rulers, obje
 - **Print** - Generate HTML for browser-based printing
 - **Cross-Platform** - Single codebase runs everywhere
 
-## Screenshots
-
-![Main designer interface](Screenshots/image.png)
 
 ## Requirements
 
