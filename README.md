@@ -40,6 +40,7 @@ The app provides a WYSIWYG label design workspace with an artboard, rulers, obje
 
 - [.NET 9.0 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
 - .NET MAUI workload
+- **Windows builds**: Windows 10 version 19041+ or **Windows 11**
 
 ## Setup
 
@@ -51,19 +52,20 @@ The app provides a WYSIWYG label design workspace with an artboard, rulers, obje
 
 ## Building
 
+> **Note:** You must build on the target platform OS. Windows apps can only be built on Windows.
+
+### Windows 11 / Windows 10
+```bash
+# Build and run
+ dotnet build -f net9.0-windows10.0.19041.0
+ dotnet run -f net9.0-windows10.0.19041.0
+```
+The app targets `windows10.0.19041.0` which is fully supported on **Windows 11**.
+
 ### macOS
 ```bash
 dotnet build -f net9.0-maccatalyst
 dotnet run -f net9.0-maccatalyst
-```
-
-### Windows
-```bash
-# Build
- dotnet build -f net9.0-windows10.0.19041.0
-
-# Run
- dotnet run -f net9.0-windows10.0.19041.0
 ```
 
 ### Android
