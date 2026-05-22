@@ -38,12 +38,12 @@ The app provides a WYSIWYG label design workspace with an artboard, rulers, obje
 
 ## Requirements
 
-- [.NET 7.0 SDK](https://dotnet.microsoft.com/download/dotnet/7.0)
+- [.NET 9.0 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
 - .NET MAUI workload
 
 ## Setup
 
-1. Install .NET 7.0 SDK
+1. Install .NET 9.0 SDK
 2. Install .NET MAUI workload:
    ```bash
    dotnet workload install maui
@@ -53,18 +53,27 @@ The app provides a WYSIWYG label design workspace with an artboard, rulers, obje
 
 ### macOS
 ```bash
-dotnet build -f net7.0-maccatalyst
-dotnet run -f net7.0-maccatalyst
+dotnet build -f net9.0-maccatalyst
+dotnet run -f net9.0-maccatalyst
 ```
 
 ### Windows
 ```bash
-dotnet build -f net7.0-windows10.0.19041.0
+# Build
+ dotnet build -f net9.0-windows10.0.19041.0
+
+# Run
+ dotnet run -f net9.0-windows10.0.19041.0
+```
+
+### Android
+```bash
+dotnet build -f net9.0-android
 ```
 
 ### iOS (requires macOS + Xcode)
 ```bash
-dotnet build -f net7.0-ios
+dotnet build -f net9.0-ios
 ```
 
 ## Project Structure
