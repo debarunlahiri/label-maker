@@ -1,0 +1,76 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Author: Debarun Lahiri -->
+  <!-- GitHub: https://github.com/debarunlahiri/ -->
+
+  <PropertyGroup>
+    <!-- Multi-target for macOS and Windows (build Windows on Windows machine) -->
+    <!-- iOS targets require iOS simulator runtimes; add net9.0-ios;net10.0-ios if needed -->
+    <TargetFrameworks>net9.0-maccatalyst;net10.0-maccatalyst</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net9.0-windows10.0.19041.0;net10.0-windows10.0.19041.0</TargetFrameworks>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>LabelMaker</RootNamespace>
+    <UseMaui>true</UseMaui>
+    <SingleProject>true</SingleProject>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+
+    <!-- Display name -->
+    <ApplicationTitle>LabelForge Studio</ApplicationTitle>
+
+    <!-- App Identifier -->
+    <ApplicationId>com.labelforge.studio</ApplicationId>
+
+    <!-- Versions -->
+    <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+    <ApplicationVersion>1</ApplicationVersion>
+
+    <!-- Platform versions -->
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
+    <!-- Windows 10 version 17763 (1809) minimum -->
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
+    <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- App Icon -->
+    <MauiIcon Include="Resources\AppIcon\appicon.png" ForegroundFile="Resources\AppIcon\appiconfg.png" Color="#512BD4" />
+
+    <!-- Splash Screen -->
+    <MauiSplashScreen Include="Resources\Splash\splash.png" Color="#512BD4" BaseSize="128,128" />
+
+    <!-- Images -->
+    <MauiImage Include="Resources\Images\*" />
+
+    <!-- Custom Fonts -->
+    <MauiFont Include="Resources\Fonts\*" />
+
+    <!-- Raw Assets -->
+    <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <MauiPackageVersion>9.0.50</MauiPackageVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- MAUI packages -->
+    <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiPackageVersion)" />
+    <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiPackageVersion)" />
+    
+    <!-- Other packages -->
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" />
+    <PackageReference Include="ZXing.Net" Version="0.16.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LabelForge.Core\LabelForge.Core.csproj" />
+  </ItemGroup>
+
+  <!-- Windows-specific item group -->
+  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
+    <Manifest Include="Platforms\Windows\Package.appxmanifest" />
+  </ItemGroup>
+
+</Project>

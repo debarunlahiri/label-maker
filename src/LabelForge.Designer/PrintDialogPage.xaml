@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="LabelMaker.PrintDialogPage"
+             Title="Print"
+             BackgroundColor="White">
+    
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+        <!-- Header -->
+        <Grid Grid.Row="0" BackgroundColor="#1a1a2e" Padding="20,15">
+            <Label Text="Enterprise Print" 
+                   TextColor="White" 
+                   FontSize="20" 
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"/>
+        </Grid>
+        
+        <!-- Printer Selection -->
+        <Grid Grid.Row="1" BackgroundColor="#f8f9fa" Padding="15">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            
+            <Label Grid.Row="0" Text="SELECT PRINTER" 
+                   FontSize="12" 
+                   FontAttributes="Bold" 
+                   TextColor="#6c757d" 
+                   Margin="0,0,0,8"/>
+            
+            <Frame Grid.Row="1" BorderColor="#dee2e6" Padding="0" CornerRadius="6">
+                <Grid ColumnDefinitions="*,Auto" Padding="12,8">
+                    <Picker Grid.Column="0" 
+                            x:Name="PrinterPicker"
+                            Title="Choose Printer"
+                            SelectedIndexChanged="OnPrinterSelected"
+                            TextColor="#212529"/>
+                    <Button Grid.Column="1" 
+                            Text="Refresh" 
+                            FontSize="14"
+                            WidthRequest="40" 
+                            HeightRequest="40"
+                            BackgroundColor="Transparent"
+                            Clicked="OnRefreshPrintersClicked"/>
+                </Grid>
+            </Frame>
+        </Grid>
+        
+        <!-- Options ScrollView -->
+        <ScrollView Grid.Row="2">
+            <VerticalStackLayout Padding="15" Spacing="15">
+                
+                <!-- Printer Info Card -->
+                <Frame x:Name="PrinterInfoFrame" 
+                       BorderColor="#28a745" 
+                       BackgroundColor="#d4edda" 
+                       Padding="12" 
+                       CornerRadius="6"
+                       IsVisible="False">
+                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto">
+                        <Label Grid.Row="0" Grid.Column="0" Text="Type:" FontAttributes="Bold" TextColor="#155724"/>
+                        <Label Grid.Row="0" Grid.Column="1" x:Name="PrinterTypeLabel" TextColor="#155724"/>
+                        <Label Grid.Row="1" Grid.Column="0" Text="Port:" FontAttributes="Bold" TextColor="#155724"/>
+                        <Label Grid.Row="1" Grid.Column="1" x:Name="PrinterPortLabel" TextColor="#155724"/>
+                        <Label Grid.Row="2" Grid.Column="0" Text="Language:" FontAttributes="Bold" TextColor="#155724"/>
+                        <Label Grid.Row="2" Grid.Column="1" x:Name="PrinterLanguageLabel" TextColor="#155724"/>
+                    </Grid>
+                </Frame>
+                
+                <!-- Label Printer Options -->
+                <Frame x:Name="LabelPrinterOptions" 
+                       BorderColor="#dee2e6" 
+                       Padding="12" 
+                       CornerRadius="6"
+                       IsVisible="False">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="LABEL PRINTER SETTINGS" 
+                               FontSize="12" 
+                               FontAttributes="Bold" 
+                               TextColor="#6c757d"/>
+                        
+                        <Grid ColumnDefinitions="*,*">
+                            <VerticalStackLayout Grid.Column="0" Spacing="5">
+                                <Label Text="Label Width (mm)" FontAttributes="Bold" FontSize="13"/>
+                                <Entry x:Name="LabelWidthEntry" Text="100" Keyboard="Numeric"/>
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="1" Spacing="5">
+                                <Label Text="Label Height (mm)" FontAttributes="Bold" FontSize="13"/>
+                                <Entry x:Name="LabelHeightEntry" Text="150" Keyboard="Numeric"/>
+                            </VerticalStackLayout>
+                        </Grid>
+                        
+                        <Grid ColumnDefinitions="*,*">
+                            <VerticalStackLayout Grid.Column="0" Spacing="5">
+                                <Label Text="Darkness (0-30)" FontAttributes="Bold" FontSize="13"/>
+                                <Slider x:Name="DarknessSlider" Minimum="0" Maximum="30" Value="15"/>
+                                <Label x:Name="DarknessValue" Text="15" HorizontalOptions="Center"/>
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="1" Spacing="5">
+                                <Label Text="Speed (1-10)" FontAttributes="Bold" FontSize="13"/>
+                                <Slider x:Name="SpeedSlider" Minimum="1" Maximum="10" Value="4"/>
+                                <Label x:Name="SpeedValue" Text="4" HorizontalOptions="Center"/>
+                            </VerticalStackLayout>
+                        </Grid>
+                        
+                        <HorizontalStackLayout Spacing="15">
+                            <CheckBox x:Name="CutAfterCheckBox" IsChecked="False"/>
+                            <Label Text="Cut After Print" VerticalOptions="Center"/>
+                            <CheckBox x:Name="PeelOffCheckBox" IsChecked="False"/>
+                            <Label Text="Peel Off" VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+                        
+                        <Label Text="Printer Language" FontAttributes="Bold" FontSize="13"/>
+                        <Picker x:Name="LanguagePicker">
+                            <Picker.ItemsSource>
+                                <x:Array Type="{x:Type x:String}">
+                                    <x:String>ZPL (Zebra)</x:String>
+                                    <x:String>EPL (Eltron)</x:String>
+                                    <x:String>CPCL (Comtec)</x:String>
+                                </x:Array>
+                            </Picker.ItemsSource>
+                        </Picker>
+                    </VerticalStackLayout>
+                </Frame>
+                
+                <!-- Standard Print Options -->
+                <Frame BorderColor="#dee2e6" Padding="12" CornerRadius="6">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="PRINT OPTIONS" 
+                               FontSize="12" 
+                               FontAttributes="Bold" 
+                               TextColor="#6c757d"/>
+                        
+                        <Grid ColumnDefinitions="120,*">
+                            <Label Grid.Column="0" Text="Copies:" VerticalOptions="Center" FontAttributes="Bold"/>
+                            <Stepper Grid.Column="1" 
+                                     x:Name="CopiesStepper"
+                                     Minimum="1" 
+                                     Maximum="99" 
+                                     Value="1"
+                                     ValueChanged="OnCopiesChanged"/>
+                        </Grid>
+                        <Label x:Name="CopiesLabel" Text="1 copy" HorizontalOptions="End"/>
+                        
+                        <Grid ColumnDefinitions="120,*">
+                            <Label Grid.Column="0" Text="Paper Size:" VerticalOptions="Center" FontAttributes="Bold"/>
+                            <Picker Grid.Column="1" x:Name="PaperSizePicker" SelectedIndex="0">
+                                <Picker.ItemsSource>
+                                    <x:Array Type="{x:Type x:String}">
+                                        <x:String>4x6 Label</x:String>
+                                        <x:String>2x1 Label</x:String>
+                                        <x:String>3x2 Label</x:String>
+                                        <x:String>A4</x:String>
+                                        <x:String>Letter</x:String>
+                                        <x:String>Custom</x:String>
+                                    </x:Array>
+                                </Picker.ItemsSource>
+                            </Picker>
+                        </Grid>
+                        
+                        <Grid ColumnDefinitions="120,*">
+                            <Label Grid.Column="0" Text="Orientation:" VerticalOptions="Center" FontAttributes="Bold"/>
+                            <Picker Grid.Column="1" x:Name="OrientationPicker" SelectedIndex="0">
+                                <Picker.ItemsSource>
+                                    <x:Array Type="{x:Type x:String}">
+                                        <x:String>Portrait</x:String>
+                                        <x:String>Landscape</x:String>
+                                    </x:Array>
+                                </Picker.ItemsSource>
+                            </Picker>
+                        </Grid>
+                        
+                        <Grid ColumnDefinitions="120,*">
+                            <Label Grid.Column="0" Text="Quality:" VerticalOptions="Center" FontAttributes="Bold"/>
+                            <Picker Grid.Column="1" x:Name="QualityPicker" SelectedIndex="1">
+                                <Picker.ItemsSource>
+                                    <x:Array Type="{x:Type x:String}">
+                                        <x:String>Draft</x:String>
+                                        <x:String>Normal</x:String>
+                                        <x:String>High</x:String>
+                                    </x:Array>
+                                </Picker.ItemsSource>
+                            </Picker>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Frame>
+                
+                <!-- TCP/IP Settings for Network Printers -->
+                <Frame x:Name="NetworkPrinterFrame" 
+                       BorderColor="#dee2e6" 
+                       Padding="12" 
+                       CornerRadius="6"
+                       IsVisible="False">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="NETWORK PRINTER" 
+                               FontSize="12" 
+                               FontAttributes="Bold" 
+                               TextColor="#6c757d"/>
+                        
+                        <Grid ColumnDefinitions="120,*">
+                            <Label Grid.Column="0" Text="Host/IP:" VerticalOptions="Center" FontAttributes="Bold"/>
+                            <Entry Grid.Column="1" x:Name="HostEntry" Placeholder="192.168.1.100"/>
+                        </Grid>
+                        
+                        <Grid ColumnDefinitions="120,*">
+                            <Label Grid.Column="0" Text="Port:" VerticalOptions="Center" FontAttributes="Bold"/>
+                            <Entry Grid.Column="1" x:Name="PortEntry" Text="9100" Keyboard="Numeric"/>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Frame>
+                
+                <!-- Output Format -->
+                <Frame BorderColor="#dee2e6" Padding="12" CornerRadius="6">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="OUTPUT FORMAT" 
+                               FontSize="12" 
+                               FontAttributes="Bold" 
+                               TextColor="#6c757d"/>
+                        
+                        <Picker x:Name="OutputFormatPicker" SelectedIndex="0">
+                            <Picker.ItemsSource>
+                                <x:Array Type="{x:Type x:String}">
+                                    <x:String>HTML (Browser Print)</x:String>
+                                    <x:String>Raw ZPL</x:String>
+                                    <x:String>Raw EPL</x:String>
+                                    <x:String>Raw CPCL</x:String>
+                                    <x:String>PDF</x:String>
+                                </x:Array>
+                            </Picker.ItemsSource>
+                        </Picker>
+                        
+                        <Button Text="View Raw Output" 
+                                BackgroundColor="#6c757d"
+                                TextColor="White"
+                                Clicked="OnViewRawOutputClicked"/>
+                    </VerticalStackLayout>
+                </Frame>
+                
+            </VerticalStackLayout>
+        </ScrollView>
+        
+        <!-- Bottom Action Buttons -->
+        <Grid Grid.Row="3" Padding="15" ColumnDefinitions="*,*,*" ColumnSpacing="10">
+            <Button Grid.Column="0" 
+                    Text="Cancel" 
+                    BackgroundColor="#6c757d"
+                    TextColor="White"
+                    Clicked="OnCancelClicked"/>
+            <Button Grid.Column="1" 
+                    Text="Preview" 
+                    BackgroundColor="#17a2b8"
+                    TextColor="White"
+                    Clicked="OnPreviewClicked"/>
+            <Button Grid.Column="2" 
+                    Text="Print" 
+                    BackgroundColor="#28a745"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    Clicked="OnPrintClicked"/>
+        </Grid>
+    </Grid>
+</ContentPage>

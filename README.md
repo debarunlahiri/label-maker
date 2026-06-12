@@ -1,137 +1,187 @@
-# Label Maker
+# LabelForge Studio
 
-A cross-platform label design application built with .NET MAUI for creating printable labels with text, shapes, images, barcodes, and QR codes.
+A cross-platform label design, barcode design, data-driven printing, print automation, and centralized print management software.
 
-The app provides a WYSIWYG label design workspace with an artboard, rulers, object list, layers, transform handles, and a properties panel.
+## Architecture
 
-![Label Maker screenshot](Screenshots/image.png)
+LabelForge Studio consists of four major components:
 
-## Features
+```
+LabelForge Studio
+├── Desktop Designer App (.NET MAUI)
+├── Local Print Agent (.NET Worker Service)
+├── Automation Server (ASP.NET Core Web API)
+└── Central System Database (PostgreSQL/SQL Server/SQLite)
+```
 
-### Design Elements
-- **Text Elements** - Rich text editing with font family, size, bold, italic, underline, color, and alignment
-- **Shapes** - Rectangles, circles, and lines with fill, border, color options
-- **Images** - Pick images from the file explorer, import them into app storage, and position them on labels
-- **Barcodes** - Generate real 1D barcodes (CODE128, CODE39, EAN13, UPC)
-- **QR Codes** - Generate real QR codes with customizable data
+## Solution Structure
 
-### Professional UI
-- **Menu Bar** - Standard File, Edit, Create, View, Arrange menus
-- **Icon Toolbar** - Quick access to common tools
-- **Object Tree Panel** - Left panel showing all objects on the label
-- **Layers Panel** - Organize elements into layers
-- **Canvas with Rulers** - Top, bottom, left, right rulers for precise positioning
-- **Grid Overlay** - Optional grid for alignment
-- **Properties Panel** - Right panel for editing element properties
-- **Status Bar** - Shows position, dimensions, angle, and zoom level
-- **Transform Handles** - Move, resize from edges/corners, rotate, and flip selected elements
+```
+LabelForge.sln
+├── src/LabelForge.Designer/              # .NET MAUI Desktop Designer App
+├── src/LabelForge.Core/                  # Shared models, interfaces, enums
+├── src/LabelForge.Database/              # EF Core DbContext, entities, migrations
+├── src/LabelForge.Server/                # ASP.NET Core Web API (Automation Server)
+├── src/LabelForge.PrintAgent/            # .NET Worker Service (Print Agent)
+└── tests/
+    ├── LabelForge.Core.Tests/
+    ├── LabelForge.Server.Tests/
+    └── LabelForge.PrintAgent.Tests/
+```
 
-### Tools
-- **Drag & Drop** - Intuitive positioning of elements on the artboard
-- **Resize and Rotate** - Photoshop-style edge/corner handles and rotation handle for all element types
-- **Flip** - Horizontal and vertical flip controls for selected elements
-- **Zoom** - Zoom in/out from 30% to 300%
-- **Save & Load** - JSON-based template persistence
-- **Print** - Generate HTML for browser-based printing
-- **Cross-Platform** - Single codebase runs everywhere
+## Getting Started
 
+### Prerequisites
 
-## Requirements
+- .NET 10.0 SDK
+- .NET MAUI workload (`dotnet workload install maui`)
+- PostgreSQL (for server/database) or SQLite (for local mode)
 
-- [.NET 9.0 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
-- .NET MAUI workload
-- **Windows builds**: Windows 10 version 19041+ or **Windows 11**
+### Build
 
-## Setup
-
-1. Install .NET 9.0 SDK
-2. Install .NET MAUI workload:
-   ```bash
-   dotnet workload install maui
-   ```
-
-## Building
-
-> **Note:** You must build on the target platform OS. Windows apps can only be built on Windows.
-
-### Windows 11 / Windows 10
 ```bash
-# Build and run
- dotnet build -f net9.0-windows10.0.19041.0
- dotnet run -f net9.0-windows10.0.19041.0
-```
-The app targets `windows10.0.19041.0` which is fully supported on **Windows 11**.
+# Build the entire solution (all projects except iOS targets)
+dotnet build LabelForge.sln
 
-### macOS
+# Build individual projects
+dotnet build src/LabelForge.Core/LabelForge.Core.csproj
+dotnet build src/LabelForge.Database/LabelForge.Database.csproj
+dotnet build src/LabelForge.Server/LabelForge.Server.csproj
+dotnet build src/LabelForge.PrintAgent/LabelForge.PrintAgent.csproj
+
+# Build the MAUI Desktop Designer (macOS)
+dotnet build src/LabelForge.Designer/LabelForge.Designer.csproj -f net10.0-maccatalyst
+```
+
+### Run
+
 ```bash
-dotnet build -f net9.0-maccatalyst
-dotnet run -f net9.0-maccatalyst
+# Run the MAUI Desktop Designer on macOS
+dotnet run --project src/LabelForge.Designer/LabelForge.Designer.csproj -f net10.0-maccatalyst
+
+# Run the Automation Server
+dotnet run --project src/LabelForge.Server/LabelForge.Server.csproj
+
+# Run the Print Agent
+dotnet run --project src/LabelForge.PrintAgent/LabelForge.PrintAgent.csproj
 ```
 
-### Android
+The Automation Server requires a database. Configure it in `src/LabelForge.Server/appsettings.json`:
+
+- **PostgreSQL** (default): Set `"DatabaseProvider": "PostgreSQL"` and update the `"DefaultConnection"` string
+- **SQLite** (local dev): Set `"DatabaseProvider": "SQLite"` and change `"DefaultConnection"` to `"Data Source=labelforge.db"`
+
+### Run Tests
+
 ```bash
-dotnet build -f net9.0-android
+dotnet test tests/LabelForge.Core.Tests/LabelForge.Core.Tests.csproj
 ```
 
-### iOS (requires macOS + Xcode)
-```bash
-dotnet build -f net9.0-ios
-```
+## Components
 
-## Project Structure
+### Desktop Designer App (LabelMaker)
 
-```
-LabelMaker/
-├── LabelMaker.csproj           # Project file
-├── MauiProgram.cs             # App bootstrap
-├── App.xaml / App.xaml.cs     # Application definition
-├── AppShell.xaml              # Navigation shell
-├── MainPage.xaml              # Main UI (BarTender-style designer)
-├── MainPage.xaml.cs           # Core logic
-├── ColorExtensions.cs         # Color conversion helpers
-├── PngImageEncoder.cs         # Managed PNG encoder for barcode/QR images
-├── Models/                    # Data models
-│   ├── LabelElement.cs        # Base element class
-│   ├── TextElement.cs         # Text element
-│   ├── BarcodeElement.cs      # Barcode element
-│   ├── QRCodeElement.cs       # QR code element
-│   ├── ShapeElement.cs        # Shape element
-│   ├── ImageElement.cs        # Image element
-│   └── LabelTemplate.cs       # Label template
-├── Platforms/                 # Platform-specific code
-│   ├── iOS/
-│   ├── MacCatalyst/
-│   └── Windows/
-├── Screenshots/               # README screenshots
-└── Resources/                 # App resources
-    ├── AppIcon/
-    └── Splash/
-```
+The MAUI desktop application for designing labels, barcodes, and RFID tags:
 
-## Usage
+- WYSIWYG canvas designer with drag & drop
+- Text, barcode, QR code, image, shape, and line elements
+- Object properties panel with full property editing
+- Rulers, grid overlay, and snap-to-grid
+- Undo/redo system
+- Template save/load (JSON format)
+- Print dialog with printer selection
+- ZPL, EPL, and CPCL label printer language output
 
-1. **Create New Label** - File > New or click New button
-2. **Add Elements** - Use Create menu or toolbar buttons to add text, shapes, barcodes, QR codes, or images
-3. **Position** - Drag elements on the canvas to position them
-4. **Resize/Rotate** - Use the selected element handles to resize from edges/corners or rotate
-5. **Flip** - Use Flip H or Flip V in the Properties panel
-6. **Edit Properties** - Select an element and use the Properties panel on the right
-7. **Import Images** - Select an image element, then click Choose Image in the Properties panel
-8. **Edit Barcode/QR Data** - Select a barcode or QR code and update the Data field
-9. **Organize** - View objects in the left Object Tree panel
-10. **Save** - File > Save to store your label template
-11. **Load** - File > Open to open saved templates
-12. **Print** - File > Print to generate a printable HTML version
-13. **Zoom** - Use +/- buttons or View menu to zoom in/out
-14. **Grid** - Toggle grid overlay with the Grid checkbox
+### LabelForge.Core
 
-## Supported Barcode Types
+Shared library with domain models, interfaces, and enums:
 
-- CODE128
-- CODE39
-- EAN13
-- UPC
+- **Models**: LabelTemplate, TemplateVersion, LabelElement hierarchy, PrintJob, PrinterInfo, User, Role, Permission, DataSource, Integration, AuditLog, GlobalVariable
+- **Interfaces**: ITemplateService, IPrinterService, IPrintService, IPrintJobService, IDataSourceService, IUserService, IAuditService, IIntegrationService
+- **Enums**: TemplateStatus, ElementType, BarcodeType, PrintJobStatus, PrinterStatus, DataSourceType, UserRole, etc.
+
+### Automation Server (LabelForge.Server)
+
+ASP.NET Core Web API for print automation:
+
+- **REST API**: Template CRUD, print job creation/status/cancel/retry, printer discovery/status
+- **Authentication**: JWT token-based authentication
+- **Background Services**: Print job processor, printer status updater, file drop watcher
+- **Database**: EF Core with PostgreSQL/SQL Server/SQLite support
+- **Integrations**: Webhook, file drop, email, database trigger, scheduled jobs
+
+### Local Print Agent (LabelForge.PrintAgent)
+
+.NET Worker Service for printer communication:
+
+- Printer discovery (Windows PowerShell, macOS lpstat)
+- Print queue management
+- Silent printing support
+- Platform-specific printer services
+
+### LabelForge.Database
+
+EF Core database context and entity configuration:
+
+- Full schema matching the requirement document
+- PostgreSQL, SQL Server, and SQLite provider support
+- Database seeding for default roles, permissions, and settings
+- Migration support
+
+## API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | /api/auth/login | User login |
+| POST | /api/auth/refresh-token | Refresh JWT token |
+| GET | /api/templates | List templates |
+| GET | /api/templates/{id} | Get template |
+| POST | /api/templates | Create template |
+| PUT | /api/templates/{id} | Update template |
+| DELETE | /api/templates/{id} | Delete template |
+| POST | /api/templates/{id}/preview | Preview template |
+| POST | /api/templates/{id}/submit | Submit for approval |
+| POST | /api/templates/{id}/approve | Approve template |
+| POST | /api/templates/{id}/reject | Reject template |
+| GET | /api/printers | List printers |
+| GET | /api/printers/{id}/status | Get printer status |
+| POST | /api/print/jobs | Create print job |
+| GET | /api/print/jobs/{id} | Get job status |
+| POST | /api/print/jobs/{id}/cancel | Cancel print job |
+| POST | /api/print/jobs/{id}/retry | Retry print job |
+| GET | /api/audit/logs | Get audit logs |
+| GET | /api/integrations | List integrations |
+| POST | /api/integrations | Create integration |
+| GET | /api/global-variables | List global variables |
+| POST | /api/global-variables | Create global variable |
+
+## Technology Stack
+
+| Component | Technology |
+|-----------|-----------|
+| Desktop App | .NET MAUI 9.0/10.0, C#, XAML, SkiaSharp |
+| Core Library | .NET 9.0/10.0, C# |
+| Automation Server | ASP.NET Core 10.0 Web API |
+| Print Agent | .NET 10.0 Worker Service |
+| Database | PostgreSQL (recommended), SQL Server, SQLite |
+| ORM | Entity Framework Core 10.0 |
+| Barcode Generation | ZXing.Net |
+| Rendering | SkiaSharp |
+| Job Scheduling | Quartz.NET |
+| Authentication | JWT Bearer |
+
+## Development Phases
+
+| Phase | Focus |
+|-------|-------|
+| Phase 1 | Solution structure, core models, database schema, basic dashboard |
+| Phase 2 | Canvas designer, text/barcode/image/shape objects, properties panel |
+| Phase 3 | Data sources (static, CSV, Excel, SQL), field mapping, formulas |
+| Phase 4 | Print screen, print preview, PDF export, local print agent |
+| Phase 5 | Automation server, REST API, webhook/file drop/email triggers |
+| Phase 6 | Users, roles, permissions, revision workflow, audit logs |
+| Phase 7 | ZPL/EPL/TSPL output, RFID adapter, batch printing, diagnostics |
 
 ## License
 
-MIT License
+Proprietary - All rights reserved.

@@ -1,4 +1,4 @@
-# .NET MAUI Label Maker - .gitignore
+# LabelForge Studio - .gitignore
 
 ## Build outputs
 bin/
@@ -140,3 +140,21 @@ Resources/Fonts/*.ttf.bak
 Resources/Images/*.png.bak
 Resources/AppIcon/*.svg.bak
 Resources/Splash/*.svg.bak
+
+## LabelForge specific
+# Server database
+*.db
+*.db-shm
+*.db-wal
+
+# Print agent watched folders
+watched/
+processed/
+error/
+
+# App settings with secrets
+src/LabelForge.Server/appsettings.Development.json
+src/LabelForge.Server/appsettings.Production.json
+
+# SDK resolver backup files
+*.SdkResolver.*.proj.Backup.tmp
